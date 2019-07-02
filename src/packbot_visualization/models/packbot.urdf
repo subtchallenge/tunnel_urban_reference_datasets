@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<robot name="packbot">
+  <link name="base">
+    <visual>
+      <geometry>
+        <!-- <mesh filename="package://packbot_visualization/meshes/Packbot_Chassis_Simplified_Scout_Coarse2.STL" scale="0.001 0.001 0.001"/> -->
+        <mesh filename="package://packbot_visualization/meshes/packbot_simple.dae" scale="1 1 1"/>
+      </geometry>
+      <!--<origin rpy="0 0 0" xyz="0 0 0.085722"/>-->
+      <!-- <origin rpy="0 0 3.1416" xyz="0.255 0 0.08572"/> -->
+      <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
+      <!-- <material name="tan"> -->
+      <!--     <color rgba="1 1 0.6 1"/> -->
+      <!-- </material> -->
+    </visual>
+  </link>
+</robot>
+

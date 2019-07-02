@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launch>
+  <param name="use_sim_time" value="true"/>
+  <arg name="bag"/>
+  <arg name="rate" default="1.0"/>
+  <arg name="name" default="gvrbotE"/>
+  <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate $(arg rate) --clock --pause tf:=tf_remap" launch-prefix="xterm -e"/>
+  <node pkg="tf_hijacker" type="tf_hijacker" name="tf_hijacker">
+    <param name="suppress1" value="gvrbotE/map"/> 
+  </node>
+  <node
+    name="$(anon robot_mesh_pub)" pkg="rostopic" type="rostopic"
+    args="pub -l -r 1.0 /$(arg name)/mesh visualization_msgs/Marker '{header: {frame_id: &quot;$(arg name)/base&quot;}, type: 10, pose: {position: {x: 0, y: 0, z: 0.0}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}, scale: {x: 1.0, y: 1.0, z: 1.0}, color: {r: 0.0, g: 0.0, b: 0.0, a: 0.0}, frame_locked: true, mesh_use_embedded_materials: true, mesh_resource: &quot;package://packbot_visualization/meshes/packbot_simple.dae&quot;}'"
+    output="screen"/>
+
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(env PWD)/$(arg name)_replay.rviz"/>
+</launch>

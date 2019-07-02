@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot name="adhoc">
+  <link name="base">
+    <visual>
+      <geometry>
+        <mesh filename="package://packbot_visualization/meshes/Packbot_Chassis_Simplified_Scout_Coarse2.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 3.1416" xyz="0.255 0 0"/>
+      <material name="tan">
+          <color rgba="1 1 0.6 1"/>
+      </material>
+    </visual>
+  </link>
+</robot>
+

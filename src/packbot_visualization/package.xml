@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+  <name>packbot_visualization</name>
+  <version>0.0.1</version>
+  <description>Packbot model/mesh</description>
+  <author>Jon Fink</author>
+  <maintainer email="jonathan.r.fink3.civ@mail.mil">Jon Fink</maintainer>
+  <license>None</license>
+  <license>ARL-LimitedRelease</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>
+
+
