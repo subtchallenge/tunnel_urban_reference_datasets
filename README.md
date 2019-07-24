@@ -1,4 +1,12 @@
-STIX DataSet README
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\title{STIX DataSet README}
+
+\begin{document}
+
+\maketitle
+
 \section{Equipment}
 The STIX datasets were collected with a refurbished iRobot Packbot Explorer, which has been designated "GVRBot". This robot has been augmented with many sensors which are representative of an entry to the DARPA SubT challenge. The sensor modalities chosen represent a super-set of typical configurations; this allows a team to experiment with various combinations to evaluate their applicability to the SubT challenge on their specific software.
 
