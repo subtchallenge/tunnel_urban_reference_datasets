@@ -5,6 +5,10 @@ The STIX datasets were collected with a refurbished iRobot Packbot Explorer, whi
 
 The robot is equipped with an Ouster OS1-64 (3D LiDAR) , a FLIR Tau2 thermal IR camera, a Carnegie Robotics Multisense SL stereo camera + illuminators + spinning LiDAR, and a Microstrain GX5-25 IMU. The robot was also equipped with a Point Grey Chameleon which was a spare device and not used in this data collection. Data was saved onto an SSD in the computing payload.
 
+![Robot Top View](GVRBotTopCallouts.jpg)
+
+![Robot Front View](GVRBotFrontCallouts.jpg)
+
 ##Software
 The data sets were collected using ROS drivers for sensor components where available. Imagery was collected in compressed or compressedDepth format to reduce file sizes. These can be reconstructed to their raw form through the use of image_transport "republish" ROS nodes, or by using image_transport when subscribing to the topics.
 ###Ouster OS1-64
