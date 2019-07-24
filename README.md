@@ -4,8 +4,11 @@
 The STIX datasets were collected with a refurbished iRobot Packbot Explorer, which has been designated "GVRBot". This robot has been augmented with many sensors which are representative of an entry to the DARPA SubT challenge. The sensor modalities chosen represent a superset of typical configurations; this allows a team to experiment with various combinations to evaluate their applicability to the SubT challenge on their specific software.
 
 The robot is equipped with an Ouster OS1-64 (3D LiDAR) , a FLIR Tau2 thermal IR camera, a Carnegie Robotics Multisense SL stereo camera + illuminators + spinning LiDAR, and a Microstrain GX5-25 IMU. The robot was also equipped with a Point Grey Chameleon which was a spare device and not used in this data collection. Data was saved onto an SSD in the computing payload.
-![Robot Top View](https://bitbucket.org/jgrogers/stix_ws/src/master/GVRBotTopCallouts.jpg)
-![Robot Front View](https://bitbucket.org/jgrogers/stix_ws/src/master/GVRBotFrontCallouts.jpg)
+
+![Robot Top View](GVRBotTopCallouts.jpg)
+
+![Robot Front View](GVRBotFrontCallouts.jpg)
+
 ##Software
 The data sets were collected using ROS drivers for sensor components where available. Imagery was collected in compressed or compressedDepth format to reduce file sizes. These can be reconstructed to their raw form through the use of image_transport "republish" ROS nodes, or by using image_transport when subscribing to the topics.
 ###Ouster OS1-64
