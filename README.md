@@ -29,7 +29,7 @@ Intrinsic calibration of this sensor was not performed, so the camera_info messa
 
 ###Microstrain IMU
 Raw microstrain imu data is recorded. This is also incorporated with the platform's odometry (which is also recorded separately) into a gvrbot/odom to gvrbot/base (base\_link?) frame. This can be stripped out if desired through the use of the tf_hijacker node which is provided in the bitbucket site at
-https://bitbucket.org/account/user/subtchallenge/projects/STIX/stix_ws. 
+https://bitbucket.org/subtchallenge/stix_ws/src/master/.
 This project also contains helpful launch files which can be used to run these bag files.
 
 ##Other considerations
