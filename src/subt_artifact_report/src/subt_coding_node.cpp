@@ -173,6 +173,7 @@ void onMouse (int event, int x, int y, int, void* data) {
             fiducials_done = true;
           }
           md->outfile << ss.str();
+          md->outfile.flush();
         }
 
       } else {

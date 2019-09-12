@@ -143,9 +143,9 @@ void EigenToTransformMsg(const Eigen::MatrixXf& eig, geometry_msgs::Transform& t
   transf.translation.x = eig(0, 3);
   transf.translation.y = eig(1, 3);
   transf.translation.z = eig(2, 3);
-  tf::Matrix3x3 matr(eig(0,0), eig(1,0), eig(2,0),
-                     eig(0,1), eig(1,1), eig(2,1),
-                     eig(0,2), eig(1,2), eig(2,2));
+  tf::Matrix3x3 matr(eig(0,0), eig(0,1), eig(0,2),
+                     eig(1,0), eig(1,1), eig(1,2),
+                     eig(2,0), eig(2,1), eig(2,2));
 
   tf::Quaternion quat;
   matr.getRotation(quat);
@@ -172,11 +172,14 @@ double getRMSE(const std::set<double>& residuals) {
   for (std::set<double>::const_iterator itr = residuals.begin(); itr != residuals.end(); itr++) {
     MSE += *itr * *itr;
   }
+  MSE = MSE / static_cast<double>(residuals.size());
   return sqrt(MSE);
 }
 
 double HandleReport(const std::tuple<double, std::string, tf::Stamped<tf::Point> >& report, double now_sec) {
   static std::set<double> residuals;
+  static double min_error = std::numeric_limits<double>::infinity();
+  static double max_error = 0.0;
   static size_t points = 0;
   static double now_sec_start = now_sec;
   static std::vector<std::tuple<std::string, tf::Point, tf::Point> > frame_correspondences_seen;
@@ -224,16 +227,16 @@ double HandleReport(const std::tuple<double, std::string, tf::Stamped<tf::Point>
         cvsrc.push_back(cv::Point3d(pt_src.x(), pt_src.y(), pt_src.z()));
         cvdest.push_back(cv::Point3d(pt_dest.x(), pt_dest.y(), pt_dest.z()));
       }
-//      Eigen::MatrixXf output_transform = Eigen::umeyama(src, dest, false);
+      Eigen::MatrixXf output_transform = Eigen::umeyama(src, dest, false);
       cv::Mat inliers;
       cv::Mat cvoutput_transform;
-      cv::estimateAffine3D(cvsrc, cvdest, cvoutput_transform, inliers);
+//      cv::estimateAffine3D(cvsrc, cvdest, cvoutput_transform, inliers);
       geometry_msgs::TransformStamped darpa_frame_transform;
       darpa_frame_transform.header.frame_id = "darpa";
       darpa_frame_transform.child_frame_id = map_frame;
       darpa_frame_transform.header.stamp = ros::Time::now();
-      CvMatToTransformMsg(cvoutput_transform, darpa_frame_transform.transform);
-//      EigenToTransformMsg(output_transform, darpa_frame_transform.transform);
+//      CvMatToTransformMsg(cvoutput_transform, darpa_frame_transform.transform);
+      EigenToTransformMsg(output_transform, darpa_frame_transform.transform);
       tfB->sendTransform(darpa_frame_transform);
       //cv::estimateAffine3D(src, dest, affine_transform, inliers);
       //printMat(output_transform);
@@ -241,6 +244,20 @@ double HandleReport(const std::tuple<double, std::string, tf::Stamped<tf::Point>
       printMat(src);
       std::cout << "DARPA frame points" <<std::endl;
       printMat(dest);
+      printMat(output_transform);
+      Eigen::MatrixXf src_homog(4, frame_correspondences_seen.size());
+      for (int i = 0; i < frame_correspondences_seen.size(); i++) {
+        for (int j = 0; j < 3; j++) {
+          src_homog(j,i) = src(j,i);
+        }
+      }
+      for (int i = 0; i < frame_correspondences_seen.size(); i++) {
+        src_homog(3,i) = 1.0;
+      }
+      printMat(src_homog);
+      std::cout << "Map frame points in darpa frame" << std::endl;
+      printMat(output_transform * src_homog);
+
     }
 
   } else {
@@ -286,8 +303,10 @@ double HandleReport(const std::tuple<double, std::string, tf::Stamped<tf::Point>
       }
       residuals.insert(residual);
       double RMSE = getRMSE(residuals);
-      rmse_file << now_sec - now_sec_start << " " << points << " " << RMSE << std::endl;
-
+      if (residual < min_error) min_error = residual;
+      if (residual > max_error) max_error = residual;
+      rmse_file << now_sec - now_sec_start << " " << points << " " << RMSE << " " << min_error << " " << max_error << std::endl;
+      rmse_file.flush();
     }
   }
   return residual;
