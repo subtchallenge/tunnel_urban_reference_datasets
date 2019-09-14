@@ -447,7 +447,7 @@ void onImagesScoring(CodingManager *md, const sensor_msgs::ImageConstPtr &msg,
   static bool first = true;
   try {
     cv::Mat image = cv_bridge::toCvShare(msg, "bgr8")->image;
-    int val = cv::waitKey(100) & 255;
+    int val = cv::waitKey(10) & 255;
     if (first) {
       int w = image.cols, h = image.rows;
       int height_each = h / md->buttons.size();
@@ -586,7 +586,7 @@ int main(int argc, char *argv[]) {
   std::ifstream infile(gt_filename.c_str(), std::ios::in);
   if (!infile.is_open()) {
     ROS_ERROR_STREAM("Cannot judge mapping run without ground truth state. "
-                     "Please provide a gt_filename");
+                     "Please provide a gt_filename. What I have is: " << gt_filename);
     exit(1);
   }
   std::string line;
@@ -599,6 +599,9 @@ int main(int argc, char *argv[]) {
   }
   infile.close();
   infile.open(fiducial_file.c_str(), std::ios::in);
+  if (!infile.is_open()) {
+    ROS_ERROR_STREAM("Unable to open fiducial ground truth locations. Please provide a fiducial_file. What I have is " << fiducial_file);
+  }
   while (std::getline(infile, line)) {
     std::stringstream ss(line);
     std::string label;
@@ -671,6 +674,7 @@ int main(int argc, char *argv[]) {
     }
     infile.close();
     reports.sort(sorttuple);
+    ROS_INFO_STREAM("Processing " << reports.size() << " artifact marking reports + fiducials");
 
     ros::Rate r(10);
     while (reports.size() != 0 && ros::ok()) {

@@ -110,7 +110,7 @@ bool ImageTo3DPoint(int x, int y, const CodingManager* md,
       std::cout <<" Local (camera frame) coordinates of interestare (" << local_pt.x << ", " << local_pt.y << ", " << local_pt.z << ")" << std::endl;
       tf::StampedTransform image_to_report_frame;
       try {
-        //            md->tf_l->waitForTransform(md->report_frame, md->image_hdr.frame_id, ros::Time(0), ros::Duration(0.1));
+        md->tf_l->waitForTransform(md->report_frame, md->image_hdr.frame_id, ros::Time(0), ros::Duration(1.2));
         md->tf_l->lookupTransform(md->report_frame, md->image_hdr.frame_id, ros::Time(0), image_to_report_frame);
       } catch(const tf::TransformException& ex) {
         ROS_ERROR_STREAM("Transform exception in subt_coding_node. Cannot transform from " 
@@ -119,6 +119,7 @@ bool ImageTo3DPoint(int x, int y, const CodingManager* md,
       }
       local_pt_vec = tf::Vector3(local_pt.x, local_pt.y, local_pt.z);
       report_pt_vec = image_to_report_frame * local_pt_vec;
+      std::cout <<"Report frame coordinates of interest are (" << report_pt_vec.x() <<", " << report_pt_vec.y() <<", " << report_pt_vec.z() <<")" << std::endl;
       return true;
     } else {
       return false;

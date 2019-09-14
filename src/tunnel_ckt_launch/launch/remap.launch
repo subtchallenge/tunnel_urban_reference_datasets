@@ -5,6 +5,7 @@
   <arg name="reproject" default="false"/>
   <arg name="reodom" default="false"/>
   <arg name="noodom" default="false"/> <!-- A setting for cartographer since it can make odom transform -->
+  <arg name="stix_mode" default="false"/>
 
   <arg name="rate" default="1.0"/>
   <arg name="mark_artifacts" default="false"/>
@@ -19,44 +20,20 @@
   <arg name="odom_only" default="false"/>
 
   <param name="use_sim_time" value="true"/>
-  <group if="$(arg reodom)">
-    <group if="$(arg noodom)">
-      <node pkg="tf_hijacker" type="tf_hijacker" name="tf_hijacker" output="screen">
-        <param name="suppress1" value="$(arg name)/map"/>
-        <param name="suppress2" value="map"/>
-        <param name="suppress3" value="$(arg name)/odom"/>
-      </node>
-    </group>
-    <group unless="$(arg noodom)">
-      <node pkg="tf_hijacker" type="tf_hijacker" name="tf_hijacker" output="screen">
-        <param name="suppress1" value="$(arg name)/map"/>
-        <param name="suppress2" value="map"/>
-        <rosparam param="switcheroos">
-          - /chinook/odom: {replacement_vel: /chinook/cmd_vel, replacement_thresh: 0.5, acceleration: 5.0}
-        </rosparam>
-      </node>
-    </group>
-  </group>
-  <group unless="$(arg reodom)">
-    <group if="$(arg noodom)">
-      <node pkg="tf_hijacker" type="tf_hijacker" name="tf_hijacker" output="screen">
-        <param name="suppress1" value="$(arg name)/map"/>
-        <param name="suppress2" value="map"/>
-        <param name="suppress3" value="$(arg name)/odom"/>
-      </node>
-    </group>
-    <group unless="$(arg noodom)">
-      <node pkg="tf_hijacker" type="tf_hijacker" name="tf_hijacker" output="screen">
-        <param name="suppress1" value="$(arg name)/map"/>
-        <param name="suppress2" value="map"/>
-      </node>
-    </group>
-  </group>
+  <node pkg="tf_hijacker" type="tf_hijacker" name="tf_hijacker" output="screen">
+    <param name="suppress1" value="$(arg name)/map"/>
+    <param name="suppress2" value="map"/>
+    <param if="$(arg noodom)" name="suppress3" value="$(arg name)/odom"/>
+    <rosparam if="$(arg reodom)" param="switcheroos" subst_value="true">
+      - $(arg name)/odom: {replacement_vel: /$(arg name)/cmd_vel, replacement_thresh: 0.5, acceleration: 5.0}
+    </rosparam>
+  </node>
   <group if="$(arg reproject)">
-    <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate $(arg rate) --pause --clock --topics /chinook/boson/camera_info /chinook/boson/image_raw /chinook/boson/image_raw/compressed /chinook/cmd_vel /chinook/husky_velocity_controller/odom /chinook/imu/data /chinook/joy /chinook/mac80211/scan /chinook/multisense/calibration/device_info /chinook/multisense/calibration/raw_cam_cal /chinook/multisense/calibration/raw_cam_config /chinook/multisense/calibration/raw_lidar_cal /chinook/multisense/depth/camera_info /chinook/multisense/depth/compressedDepth /chinook/multisense/imu/accelerometer /chinook/multisense/imu/accelerometer_vector /chinook/multisense/imu/gyroscope /chinook/multisense/imu/gyroscope_vector /chinook/multisense/imu/imu_data /chinook/multisense/imu/magnetometer /chinook/multisense/imu/magnetometer_vector /chinook/multisense/left/camera_info /chinook/multisense/left/image_rect_color/camera_info /chinook/multisense/left/image_rect_color/compressed /chinook/multisense/lidar_points2 /chinook/multisense/pps /chinook/multisense/right/camera_info /chinook/multisense/right/image_rect/camera_info /chinook/multisense/right/image_rect/compressed /chinook/multisense/stamped_pps /chinook/multisense/status /chinook/odom /chinook/ouster/imu_packets /chinook/ouster/lidar_packets /diagnostics_agg /tf /tf_static tf:=tf_remap" launch-prefix="xterm -e"/>
+    <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate $(arg rate) --pause --clock --topics /$(arg name)/boson/camera_info /$(arg name)/boson/image_raw /$(arg name)/boson/image_raw/compressed /$(arg name)/cmd_vel /$(arg name)/husky_velocity_controller/odom /$(arg name)/imu/data /$(arg name)/joy /$(arg name)/mac80211/scan /$(arg name)/multisense/calibration/device_info /$(arg name)/multisense/calibration/raw_cam_cal /$(arg name)/multisense/calibration/raw_cam_config /$(arg name)/multisense/calibration/raw_lidar_cal /$(arg name)/multisense/depth/camera_info /$(arg name)/multisense/depth/compressedDepth /$(arg name)/multisense/imu/accelerometer /$(arg name)/multisense/imu/accelerometer_vector /$(arg name)/multisense/imu/gyroscope /$(arg name)/multisense/imu/gyroscope_vector /$(arg name)/multisense/imu/imu_data /$(arg name)/multisense/imu/magnetometer /$(arg name)/multisense/imu/magnetometer_vector /$(arg name)/multisense/left/camera_info /$(arg name)/multisense/left/image_rect_color/camera_info /$(arg name)/multisense/left/image_rect_color/compressed /$(arg name)/multisense/lidar_points2 /$(arg name)/multisense/pps /$(arg name)/multisense/right/camera_info /$(arg name)/multisense/right/image_rect/camera_info /$(arg name)/multisense/right/image_rect/compressed /$(arg name)/multisense/stamped_pps /$(arg name)/multisense/status /$(arg name)/odom /$(arg name)/ouster/imu_packets /$(arg name)/ouster/lidar_packets /$(arg name)/os1_node/lidar_packets /$(arg name)/os1_node/imu_packets /diagnostics_agg /tf /tf_static tf:=tf_remap" launch-prefix="xterm -e"/>
+    <node pkg="topic_tools" type="relay" name="os_packet_relay" args="/$(arg name)/os1_node/lidar_packets /$(arg name)/ouster/lidar_packets"/>
     <group ns="$(arg name)">
       <node pkg="nodelet" type="nodelet" name="assemble_nodelet"
-        args="standalone ouster_assembler/AssembleNodelet" output="screen">
+        args="standalone ouster_assembler/AssembleNodelet" output="screen" launch-prefix="xterm -e">
         <param name="lidar_frame" value="ouster_lidar" />
         <param name="fixed_frame" value="odom"/>
         <param name="sensor_frame" value="ouster"/>
@@ -70,75 +47,99 @@
     </group>
   </group>
   <group unless="$(arg reproject)">
-    <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate $(arg rate) --pause --clock --topics /chinook/boson/camera_info /chinook/boson/image_raw /chinook/boson/image_raw/compressed /chinook/cmd_vel /chinook/husky_velocity_controller/odom /chinook/imu/data /chinook/joy /chinook/mac80211/scan /chinook/multisense/calibration/device_info /chinook/multisense/calibration/raw_cam_cal /chinook/multisense/calibration/raw_cam_config /chinook/multisense/calibration/raw_lidar_cal /chinook/multisense/depth/camera_info /chinook/multisense/depth/compressedDepth /chinook/multisense/imu/accelerometer /chinook/multisense/imu/accelerometer_vector /chinook/multisense/imu/gyroscope /chinook/multisense/imu/gyroscope_vector /chinook/multisense/imu/imu_data /chinook/multisense/imu/magnetometer /chinook/multisense/imu/magnetometer_vector /chinook/multisense/left/camera_info /chinook/multisense/left/image_rect_color/camera_info /chinook/multisense/left/image_rect_color/compressed /chinook/multisense/lidar_points2 /chinook/multisense/pps /chinook/multisense/right/camera_info /chinook/multisense/right/image_rect/camera_info /chinook/multisense/right/image_rect/compressed /chinook/multisense/stamped_pps /chinook/multisense/status /chinook/assembled_cloud /chinook/ouster/points /chinook/odom /chinook/ouster/imu_packets /chinook/ouster/lidar_packets /diagnostics_agg /tf /tf_static tf:=tf_remap" launch-prefix="xterm -e"/>
-  </group>
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(env PWD)/rviz.rviz"/>
-  <node pkg="static_transform_mux" type="static_transform_mux" name="static_transform_mux"/>
-  <node if="$(arg mark_artifacts)" pkg="subt_artifact_report" type="subt_scoring_node" name="subt_coding_node" output="screen">
-    <param name="image" value="/$(arg name)/multisense/left/image_rect_color"/>
-    <param name="depth_image" value="/$(arg name)/multisense/depth"/>
-    <remap from="camera_info" to="/$(arg name)/multisense/left/image_rect_color/camera_info"/>
-    <param name="object_classes" value="$(env PWD)/object_classes"/>
-    <param name="report_frame" value="$(arg name)/base_link"/>
-    <param name="outfile" value="$(env PWD)/coded_artifacts/$(arg bag).artifacts"/>
-    <param name="gt_filename" value="$(env PWD)/gt_$(arg course)_$(arg config).csv"/>
-    <param name="artifacts_filename" value="$(env PWD)/coded_artifacts/$(arg bag).artifacts"/>
-    <param name="output_filename" value="/var/tmp/report"/>
-    <param name="use_optical_frame_report" value="false"/>
-    <param name="fiducial_file" value="$(env PWD)/fiducial_$(arg course)"/>
-    <param name="coding_mode" value="true"/>
-  </node>
-  <node unless="$(arg mark_artifacts)" pkg="subt_artifact_report" type="subt_scoring_node" name="scoring_node" output="screen">
-    <param name="gt_filename" value="$(env PWD)/gt_$(arg course)_$(arg config).csv"/>
-    <param name="artifacts_filename" value="$(env PWD)/coded_artifacts/$(arg bag).artifacts"/>
-    <param name="output_filename" value="/var/tmp/report"/>
-    <param name="use_optical_frame_report" value="false"/>
-    <param name="fiducial_file" value="$(env PWD)/fiducial_$(arg course)"/>
-    <param name="coding_mode" value="false"/>
+    <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate $(arg rate) --pause --clock --topics /$(arg name)/boson/camera_info /$(arg name)/boson/image_raw /$(arg name)/boson/image_raw/compressed /$(arg name)/cmd_vel /$(arg name)/husky_velocity_controller/odom /$(arg name)/imu/data /$(arg name)/joy /$(arg name)/mac80211/scan /$(arg name)/multisense/calibration/device_info /$(arg name)/multisense/calibration/raw_cam_cal /$(arg name)/multisense/calibration/raw_cam_config /$(arg name)/multisense/calibration/raw_lidar_cal /$(arg name)/multisense/depth/camera_info /$(arg name)/multisense/depth/compressedDepth /$(arg name)/multisense/imu/accelerometer /$(arg name)/multisense/imu/accelerometer_vector /$(arg name)/multisense/imu/gyroscope /$(arg name)/multisense/imu/gyroscope_vector /$(arg name)/multisense/imu/imu_data /$(arg name)/multisense/imu/magnetometer /$(arg name)/multisense/imu/magnetometer_vector /$(arg name)/multisense/left/camera_info /$(arg name)/multisense/left/image_rect_color/camera_info /$(arg name)/multisense/left/image_rect_color/compressed /$(arg name)/multisense/lidar_points2 /$(arg name)/multisense/pps /$(arg name)/multisense/right/camera_info /$(arg name)/multisense/right/image_rect/camera_info /$(arg name)/multisense/right/image_rect/compressed /$(arg name)/multisense/stamped_pps /$(arg name)/multisense/status /$(arg name)/assembled_cloud /$(arg name)/ouster/points /$(arg name)/odom /$(arg name)/ouster/imu_packets /$(arg name)/ouster/lidar_packets /$(arg name)/os1_cloud_node/points /diagnostics_agg /tf /tf_static tf:=tf_remap" launch-prefix="xterm -e"/>
+    <group if="$(arg stix_mode)" ns="$(arg name)">
+      <param name="tf_prefix" value="$(arg name)" />
 
-  </node>
-  <node pkg="imu_reframer" type="distance_traveled_node" name="distance_traveled_node" output="screen">
-    <param name="from_frame" value="darpa"/>
-    <param name="to_frame" value="$(arg name)/base"/>
-  </node>
-  <group ns="$(arg name)">
-    <param name="tf_prefix" value="$(arg name)"/>
-    <node
-      name="$(anon robot_mesh_pub3)" pkg="rostopic" type="rostopic"
-      args="pub -l -r 1.0 /$(arg name)/robot_marker visualization_msgs/Marker '{header: {frame_id: &quot;$(arg name)/base&quot;}, type: 10, pose: {position: {x: 0, y: 0, z: 0.17}, orientation: {x: 0.707, y: 0.707, z: 0.0, w: 0.0}}, scale: {x: 1.0, y: 1.0, z: 1.0}, color: {r: 0.7, g: 0.7, b: 0.0, a: 1.0}, frame_locked: true, mesh_use_embedded_materials: true, mesh_resource: &quot;package://demo_cerberus_explore/meshes/husky.dae&quot;}'"
-      output="screen"/>
+     <node pkg="incremental_assembler"
+        type="incremental_assembler"
+        name="assembler" output="screen">
+      <param name="fixed_frame" value="odom" />
+      <remap from="velodyne_points" to="multisense/lidar_points2"/>
+      <param name="output_frame" value="base" />
+      <param name="x_bound" value="20.0" />
+      <param name="y_bound" value="20.0" />
+      <param name="z_bound" value="20.0" />
+      <param name="x_self_min" value="0.2"/>
+      <param name="y_self_min" value="0.2"/>
+      <param name="xn_self_min" value="0.2"/>
+      <param name="resolution" value="0.025" />
+      <param name="downsample" value="3" />
+      <param name="trigger_time" value="1.3"/>
 
-    <!--    <param name="robot_description"
-        command="$(find husky_description)/scripts/env_run
-        $(find husky_description)/urdf/configs/husky
-    $(find xacro)/xacro $(find husky_description)/urdf/husky.urdf.xacro ns:=$(arg name)" /> -->
-    <!-- Only one of these should be activated at a time-->
-    <group if="$(arg omnimapper)"> 
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).omnimapper.rmse"/>
-      <include if="$(arg omnimapper)" file="$(find mapping_launch)/launch/omnimapper_3d.launch">
-        <arg name="name" value="$(arg name)"/>
-      </include> 
-    </group>
-    <group if="$(arg cartographer)"> 
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).cartographer.rmse"/>
-      <include file="$(find tunnel_ckt_launch)/launch/cartographer.launch">
-        <arg name="name" value="$(arg name)"/>
-      </include>
-    </group>
-    <group if="$(arg gmapping)"> 
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).gmapping.rmse"/>
-      <include file="gmapping.launch">
-        <arg name="name" value="$(arg name)"/>
-      </include>
-    </group>
-    <group if="$(arg odom_only)">
-      <node if="$(arg odom_only)" name="odom_map_tf_pub" type="static_transform_publisher" pkg="tf2_ros" args="0 0 0 0 0 0 map $(arg name)/odom"/>
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).odom_only.rmse"/>
-    </group>
+      <param name="remove_ground_plane" value="false"/>
+      <param name="ground_filter_distance" value="0.1"/>
+
+      <param name="c_x_bound" value="10.0" />
+      <param name="c_y_bound" value="5.0" />
+      <param name="c_z_bound" value="3.0" />
+
+      <param name="scan_history_secs" value="2.5"/>
+      <param name="continuous_cloud_publish_secs" value="0.5"/>
+
+      <param name="multireturn" value="false"/>
+      <param name="platform" value="$(arg name)"/>
+    </node>
+    <node if="$(arg cartographer)" pkg="omnimapper_tools" type="cloud_destamper" name="destamper">
+
+    </node>
+
   </group>
 
-  <group if="$(arg bag_out)">
-    <node pkg="rosbag" type="record" name="record" args="-O $(env PWD)/$(arg bag).out.bag /tf /tf_static /$(arg name)/point_cloud_cache/renderers/full_cloud /$(arg name)/point_cloud_cache/renderers/full_map /SubT_markers"/>
+</group>
+<node pkg="rviz" type="rviz" name="rviz" args="-d $(env PWD)/rviz_$(arg name).rviz"/>
+<node pkg="static_transform_mux" type="static_transform_mux" name="static_transform_mux"/>
+<node pkg="subt_artifact_report" type="subt_scoring_node" name="scoring_node" output="screen">
+  <param name="image" value="/$(arg name)/multisense/left/image_rect_color"/>
+  <param name="depth_image" value="/$(arg name)/multisense/depth"/>
+  <remap from="camera_info" to="/$(arg name)/multisense/left/image_rect_color/camera_info"/>
+  <param name="object_classes" value="$(env PWD)/object_classes"/>
+  <param name="report_frame" value="$(arg name)/base"/>
+  <param name="outfile" value="$(env PWD)/coded_artifacts/$(arg bag).artifacts"/>
+  <param name="gt_filename" value="$(env PWD)/gt_$(arg course)_$(arg config).csv"/>
+  <param name="artifacts_filename" value="$(env PWD)/coded_artifacts/$(arg bag).artifacts"/>
+  <param name="output_filename" value="/var/tmp/report"/>
+  <param name="use_optical_frame_report" value="false"/>
+  <param name="fiducial_file" value="$(env PWD)/fiducial_$(arg course)"/>
+  <param name="coding_mode" value="$(arg mark_artifacts)"/>
+</node>
+<node pkg="imu_reframer" type="distance_traveled_node" name="distance_traveled_node" output="screen">
+  <param name="from_frame" value="darpa"/>
+  <param name="to_frame" value="$(arg name)/base"/>
+</node>
+<group ns="$(arg name)">
+  <param name="tf_prefix" value="$(arg name)"/>
+  <node
+    name="$(anon robot_mesh_pub3)" pkg="rostopic" type="rostopic"
+    args="pub -l -r 1.0 /$(arg name)/robot_marker visualization_msgs/Marker '{header: {frame_id: &quot;$(arg name)/base&quot;}, type: 10, pose: {position: {x: 0, y: 0, z: 0.17}, orientation: {x: 0.707, y: 0.707, z: 0.0, w: 0.0}}, scale: {x: 1.0, y: 1.0, z: 1.0}, color: {r: 0.7, g: 0.7, b: 0.0, a: 1.0}, frame_locked: true, mesh_use_embedded_materials: true, mesh_resource: &quot;package://demo_cerberus_explore/meshes/husky.dae&quot;}'"
+    output="screen"/>
+
+  <group if="$(arg omnimapper)"> 
+    <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).omnimapper.rmse"/>
+    <include if="$(arg omnimapper)" file="$(find mapping_launch)/launch/omnimapper_3d.launch">
+      <arg name="name" value="$(arg name)"/>
+    </include> 
   </group>
-  <param name="/chinook/point_cloud_cache/renderers/point_cloud/on_demand_cloud_only" value="true"/>
+  <group if="$(arg cartographer)"> 
+    <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).cartographer.rmse"/>
+    <include file="$(find tunnel_ckt_launch)/launch/cartographer.launch">
+      <arg name="name" value="$(arg name)"/>
+    </include>
+  </group>
+  <group if="$(arg gmapping)"> 
+    <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).gmapping.rmse"/>
+    <include file="gmapping.launch">
+      <arg name="name" value="$(arg name)"/>
+    </include>
+  </group>
+  <group if="$(arg odom_only)">
+    <node if="$(arg odom_only)" name="odom_map_tf_pub" type="static_transform_publisher" pkg="tf2_ros" args="0 0 0 0 0 0 map $(arg name)/odom"/>
+    <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).odom_only.rmse"/>
+  </group>
+</group>
+
+<group if="$(arg bag_out)">
+  <node pkg="rosbag" type="record" name="record" args="-O $(env PWD)/$(arg bag).out.bag /tf /tf_static /$(arg name)/point_cloud_cache/renderers/full_cloud /$(arg name)/point_cloud_cache/renderers/full_map /SubT_markers"/>
+</group>
+<param name="/$(arg name)/point_cloud_cache/renderers/point_cloud/on_demand_cloud_only" value="true"/>
 </launch>
