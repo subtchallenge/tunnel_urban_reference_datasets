@@ -97,6 +97,10 @@
     <param name="coding_mode" value="false"/>
 
   </node>
+  <node pkg="imu_reframer" type="distance_traveled_node" name="distance_traveled_node" output="screen">
+    <param name="from_frame" value="darpa"/>
+    <param name="to_frame" value="$(arg name)/base"/>
+  </node>
   <group ns="$(arg name)">
     <param name="tf_prefix" value="$(arg name)"/>
     <node

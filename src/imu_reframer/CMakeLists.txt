@@ -10,6 +10,7 @@ project(imu_reframer)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -134,7 +135,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/imu_reframer_node.cpp)
 add_executable(odom_repeat_filter_node src/odom_repeat_filter_node.cpp)
-
+add_executable(distance_traveled_node src/distance_traveled_node.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -152,6 +153,10 @@ target_link_libraries(${PROJECT_NAME}_node
 target_link_libraries(odom_repeat_filter_node
   ${catkin_LIBRARIES}
 )
+target_link_libraries(distance_traveled_node
+  ${catkin_LIBRARIES}
+)
+
 
 
 #############
@@ -170,7 +175,7 @@ target_link_libraries(odom_repeat_filter_node
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-install(TARGETS ${PROJECT_NAME}_node odom_repeat_filter_node
+install(TARGETS ${PROJECT_NAME}_node odom_repeat_filter_node distance_traveled_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

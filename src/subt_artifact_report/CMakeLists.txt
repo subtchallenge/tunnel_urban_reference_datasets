@@ -119,7 +119,7 @@ link_directories(${apriltag_LIBDIR})
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES subt_artifact_report
 #  CATKIN_DEPENDS rosbag roscpp sensor_msgs
 #  DEPENDS system_lib
@@ -132,7 +132,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${Eigen_INCLUDE_DIRS}
@@ -151,10 +151,12 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
+add_library(coding src/coding.cpp)
+target_link_libraries(coding ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
 add_executable(subt_coding_node src/subt_coding_node.cpp)
-target_link_libraries(subt_coding_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
+target_link_libraries(subt_coding_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES} coding)
 add_executable(subt_scoring_node src/subt_scoring_node.cpp)
-target_link_libraries(subt_scoring_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
+target_link_libraries(subt_scoring_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES} coding)
 ### Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
