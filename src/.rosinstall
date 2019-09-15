@@ -10,3 +10,6 @@
 - git:
     local-name: orb_slam_2_ros
     uri: https://github.com/appliedAI-Initiative/orb_slam_2_ros.git
+- git:
+    local-name: vins_fusion
+    uri: https://github.com/HKUST-Aerial-Robotics/VINS-Fusion.git
