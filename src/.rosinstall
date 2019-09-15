@@ -13,3 +13,6 @@
 - git:
     local-name: viso2
     uri: https://github.com/srv/viso2.git
+- git:
+    local-name: vins_fusion
+    uri: https://github.com/HKUST-Aerial-Robotics/VINS-Fusion.git
