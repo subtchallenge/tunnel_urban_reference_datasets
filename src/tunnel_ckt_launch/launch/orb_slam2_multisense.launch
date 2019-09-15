@@ -1,0 +1,29 @@
+<launch>
+  <arg name="name" default="robot"/>
+  <arg name="pointcloud_frame" default="map"/>
+  <arg name="camera_frame" default="multisense/head"/>
+  <arg name="left_camera_topic" default="/multisense/left/image_rect_mono"/>
+  <arg name="right_camera_topic" default="/multisense/right/image_rect_mono"/>
+  
+  <node name="orb_slam2_stereo" pkg="orb_slam2_ros"
+      type="orb_slam2_ros_stereo" output="screen">
+
+       <remap from="image_left/image_color_rect" to="$(arg left_camera_topic)" />
+       <remap from="image_right/image_color_rect" to="$(arg right_camera_topic)" />
+
+       <param name="publish_pointcloud" type="bool" value="true" />
+       <param name="publish_pose" type="bool" value="true" />
+       <param name="localize_only" type="bool" value="false" />
+       <param name="reset_map" type="bool" value="false" />
+
+       <!-- static parameters -->
+       <param name="load_map" type="bool" value="false" />
+       <param name="map_file" type="string" value="map.bin" />
+       <param name="settings_file" type="string" value="$(find tunnel_ckt_launch)/config/orb_slam_2/MultisenseStereo.yaml" />
+       <param name="voc_file" type="string" value="$(find orb_slam2_ros)/orb_slam2/Vocabulary/ORBvoc.txt" />
+
+       <param name="pointcloud_frame_id" type="string" value="$(arg pointcloud_frame)" />
+       <param name="camera_frame_id" type="string" value="$(arg camera_frame)" />
+       <param name="min_num_kf_in_map" type="int" value="5" />
+  </node>
+</launch>
