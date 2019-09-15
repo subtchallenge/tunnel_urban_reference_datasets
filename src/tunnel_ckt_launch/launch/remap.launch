@@ -19,7 +19,7 @@
   <arg name="gmapping" default="false"/>
   <arg name="odom_only" default="false"/>
   <arg name="msckf" default="false"/>   <!-- Note: not stable -->
-  <arg name="vins" default="false"/>    <!-- Note: not supported yet -->
+  <arg name="vins" default="false"/>    <!-- Note: not stable -->
   <arg name="orbslam" default="false"/>
 
   <param name="use_sim_time" value="true"/>
@@ -175,6 +175,8 @@
       </node>
       <!-- Right image is compressed, grayscale. We will decompress. -->
       <node pkg="image_transport" type="republish" name="republish_right_image" output="screen" args="_image_transport:=compressed in:=/$(arg name)/multisense/right/image_rect raw out:=/$(arg name)/multisense/right/image_rect_mono" />
+      <node pkg="vins" type="vins_node" name="vins" output="screen" args="$(find tunnel_ckt_launch)/config/vins_fusion/multisense_stereo_config.yaml" />
+      <node pkg="loop_fusion" type="loop_fusion_node" name="vins_loop_fusion" output="screen" args="$(find tunnel_ckt_launch)/config/vins_fusion/multisense_stereo_config.yaml" />
     </group>
     <!-- ORBSLAM -->
     <group if="$(arg orbslam)">
