@@ -29,12 +29,13 @@ tf2_ros::StaticTransformBroadcaster *tfB;
 std::string map_frame;
 
 std::vector<tf::Point> fiducials_observed;
-std::vector<std::pair<std::string, tf::Point>> good_artifacts;
-std::vector<std::pair<std::string, tf::Point>> bad_artifacts;
+std::vector<std::tuple<std::string, tf::Point, int, std::string>> good_artifacts;
+std::vector<std::tuple<std::string, tf::Point, int, std::string>> bad_artifacts;
 
 ros::Publisher *marker_pub;
 ofstream rmse_file;
 
+bool reverse_transform = true;
 void PublishMarkers() {
   static visualization_msgs::MarkerArray delete_markers;
   // Draw all ground truth points in blue
@@ -60,10 +61,10 @@ void PublishMarkers() {
   marker.scale.x = 0.3;
   marker.scale.y = 0.3;
   marker.scale.z = 0.3;
-  marker.pose.orientation.w = 0.0;
+  marker.pose.orientation.w = 1.0;
   marker.pose.orientation.x = 0.0;
   marker.pose.orientation.y = 0.0;
-  marker.pose.orientation.z = 1.0;
+  marker.pose.orientation.z = 0.0;
   for (size_t i = 0; i < gt_artifacts.size(); i++) {
     marker.pose.position.x = gt_artifacts[i].second.x();
     marker.pose.position.y = gt_artifacts[i].second.y();
@@ -87,9 +88,9 @@ void PublishMarkers() {
   marker.color.b = 0.0;
   marker.color.a = 1.0;
   for (size_t i = 0; i < good_artifacts.size(); i++) {
-    marker.pose.position.x = good_artifacts[i].second.x();
-    marker.pose.position.y = good_artifacts[i].second.y();
-    marker.pose.position.z = good_artifacts[i].second.z();
+    marker.pose.position.x = std::get<1>(good_artifacts[i]).x();
+    marker.pose.position.y = std::get<1>(good_artifacts[i]).y();
+    marker.pose.position.z = std::get<1>(good_artifacts[i]).z();
     send_markers.markers.push_back(marker);
     marker.action = visualization_msgs::Marker::DELETE;
     delete_markers.markers.push_back(marker);
@@ -98,20 +99,46 @@ void PublishMarkers() {
     visualization_msgs::Marker text_marker = marker;
     text_marker.pose.position.z += 1.0;
     text_marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
-    text_marker.text = good_artifacts[i].first;
+    text_marker.text = std::get<0>(good_artifacts[i]);
+    send_markers.markers.push_back(text_marker);
+    marker.id++;
+    visualization_msgs::Marker line_marker = marker;
+    line_marker.type = visualization_msgs::Marker::LINE_LIST;
+    line_marker.scale.x = 0.1;
+    line_marker.pose.position.x = 0;
+    line_marker.pose.position.y = 0;
+    line_marker.pose.position.z = 0;
+    line_marker.points.push_back(marker.pose.position);
+    geometry_msgs::Point distal_pt;
+    distal_pt.x = gt_artifacts[std::get<2>(good_artifacts[i])].second.x(); 
+    distal_pt.y = gt_artifacts[std::get<2>(good_artifacts[i])].second.y();
+    distal_pt.z = gt_artifacts[std::get<2>(good_artifacts[i])].second.z();
+    line_marker.points.push_back(distal_pt);
+    send_markers.markers.push_back(line_marker);
+    line_marker.action = visualization_msgs::Marker::DELETE;
+    delete_markers.markers.push_back(line_marker);
+    text_marker.action = visualization_msgs::Marker::DELETE;
+
+    delete_markers.markers.push_back(text_marker);
+    marker.id++;
+    text_marker.action = visualization_msgs::Marker::ADD;
+    text_marker.text = std::get<3>(good_artifacts[i]);
+    text_marker.pose.position.x = (distal_pt.x + marker.pose.position.x)/2.0;
+    text_marker.pose.position.y = (distal_pt.y + marker.pose.position.y)/2.0;
+    text_marker.pose.position.z = (distal_pt.z + marker.pose.position.z)/2.0 - 0.5; //below
+    text_marker.id = marker.id++;
     send_markers.markers.push_back(text_marker);
     text_marker.action = visualization_msgs::Marker::DELETE;
     delete_markers.markers.push_back(text_marker);
-    marker.id++;
   }
   marker.color.r = 1.0;
   marker.color.g = 0.0;
   marker.color.b = 0.0;
   marker.color.a = 1.0;
   for (size_t i = 0; i < bad_artifacts.size(); i++) {
-    marker.pose.position.x = bad_artifacts[i].second.x();
-    marker.pose.position.y = bad_artifacts[i].second.y();
-    marker.pose.position.z = bad_artifacts[i].second.z();
+    marker.pose.position.x = std::get<1>(bad_artifacts[i]).x();
+    marker.pose.position.y = std::get<1>(bad_artifacts[i]).y();
+    marker.pose.position.z = std::get<1>(bad_artifacts[i]).z();
     send_markers.markers.push_back(marker);
     marker.action = visualization_msgs::Marker::DELETE;
     delete_markers.markers.push_back(marker);
@@ -120,11 +147,36 @@ void PublishMarkers() {
     visualization_msgs::Marker text_marker = marker;
     text_marker.pose.position.z += 1.0;
     text_marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
-    text_marker.text = bad_artifacts[i].first;
+    text_marker.text = std::get<0>(bad_artifacts[i]);
     send_markers.markers.push_back(text_marker);
+    marker.id++;
+    visualization_msgs::Marker line_marker = marker;
+    line_marker.type = visualization_msgs::Marker::LINE_LIST;
+    line_marker.scale.x = 0.1;
+    line_marker.pose.position.x = 0;
+    line_marker.pose.position.y = 0;
+    line_marker.pose.position.z = 0;
+    line_marker.points.push_back(marker.pose.position);
+    geometry_msgs::Point distal_pt;
+    distal_pt.x = gt_artifacts[std::get<2>(bad_artifacts[i])].second.x(); 
+    distal_pt.y = gt_artifacts[std::get<2>(bad_artifacts[i])].second.y();
+    distal_pt.z = gt_artifacts[std::get<2>(bad_artifacts[i])].second.z();
+    line_marker.points.push_back(distal_pt);
+    send_markers.markers.push_back(line_marker);
+    line_marker.action = visualization_msgs::Marker::DELETE;
+    delete_markers.markers.push_back(line_marker);
     text_marker.action = visualization_msgs::Marker::DELETE;
     delete_markers.markers.push_back(text_marker);
     marker.id++;
+    text_marker.action = visualization_msgs::Marker::ADD;
+    text_marker.text = std::get<3>(bad_artifacts[i]);
+    text_marker.pose.position.x = (distal_pt.x + marker.pose.position.x)/2.0;
+    text_marker.pose.position.y = (distal_pt.y + marker.pose.position.y)/2.0;
+    text_marker.pose.position.z = (distal_pt.z + marker.pose.position.z)/2.0 - 0.5; //below
+    text_marker.id = marker.id++;
+    send_markers.markers.push_back(text_marker);
+    text_marker.action = visualization_msgs::Marker::DELETE;
+    delete_markers.markers.push_back(text_marker);
   }
   marker.color.r = 1.0;
   marker.color.g = 1.0;
@@ -309,12 +361,18 @@ double HandleReport(
       cv::Mat cvoutput_transform;
       //      cv::estimateAffine3D(cvsrc, cvdest, cvoutput_transform, inliers);
       geometry_msgs::TransformStamped darpa_frame_transform;
-      darpa_frame_transform.header.frame_id = "darpa";
-      darpa_frame_transform.child_frame_id = map_frame;
+      if (reverse_transform) {
+        darpa_frame_transform.header.frame_id = map_frame;
+        darpa_frame_transform.child_frame_id = "darpa"; 
+        EigenToTransformMsg(output_transform.inverse(), darpa_frame_transform.transform);
+      } else {
+        darpa_frame_transform.header.frame_id = "darpa";
+        darpa_frame_transform.child_frame_id = map_frame;
+        EigenToTransformMsg(output_transform, darpa_frame_transform.transform);
+      }
       darpa_frame_transform.header.stamp = ros::Time::now();
       //      CvMatToTransformMsg(cvoutput_transform,
       //      darpa_frame_transform.transform);
-      EigenToTransformMsg(output_transform, darpa_frame_transform.transform);
       tfB->sendTransform(darpa_frame_transform);
       // cv::estimateAffine3D(src, dest, affine_transform, inliers);
       // printMat(output_transform);
@@ -367,9 +425,11 @@ double HandleReport(
         gt_artifacts.end();
     double best_dist = std::numeric_limits<double>::infinity();
     double best_distxy = std::numeric_limits<double>::infinity();
+    int ind = 0;
+    int best_ind = -1;
     for (std::vector<std::pair<std::string, tf::Point>>::const_iterator itr =
              gt_artifacts.begin();
-         itr != gt_artifacts.end(); itr++) {
+         itr != gt_artifacts.end(); itr++, ind++) {
 
       if (itr->first == std::get<1>(report)) {
         double dist = pt_darpa.distance(itr->second);
@@ -384,6 +444,7 @@ double HandleReport(
         if (dist < best_dist) {
           best_dist = dist;
           closest_itr = itr;
+          best_ind = ind;
         }
         if (distxy < best_distxy) {
           best_distxy = distxy;
@@ -395,9 +456,13 @@ double HandleReport(
         std::cout << " A point scored with residual error of " << best_dist
                   << std::endl;
         points++;
-        good_artifacts.push_back(std::make_pair(std::get<1>(report), pt_darpa));
+        std::stringstream ss;
+        ss << best_dist << "m";
+        good_artifacts.push_back(std::make_tuple(std::get<1>(report), pt_darpa, best_ind, ss.str()));
       } else {
-        bad_artifacts.push_back(std::make_pair(std::get<1>(report), pt_darpa));
+        std::stringstream ss;
+        ss << best_dist << "m";
+        bad_artifacts.push_back(std::make_tuple(std::get<1>(report), pt_darpa, best_ind, ss.str()));
       }
       if (best_distxy <= 5.0) {
         std::cout << "A point scored if we limit to xy plane with residual "
