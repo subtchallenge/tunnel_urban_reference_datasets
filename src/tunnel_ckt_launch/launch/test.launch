@@ -1,0 +1,14 @@
+<launch>
+
+  <arg name="bag"/>
+  <arg name="scale" default="1.0"/>
+  <param name="use_sim_time" value="true"/>
+  <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate 5.0 --clock tf:=tf_remap" launch-prefix="xterm -e"/>
+  <node pkg="tf_hijacker" type="tf_hijacker" name="tf_hijacker">
+    <param name="suppress1" value="map"/>
+    <param name="suppress2" value="chinook/map"/>
+    <param name="scaler1" value="chinook/odom"/>
+    <param name="scaler1_amount" value="$(arg scale)"/>
+  </node>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(env PWD)/rviz.rviz"/>
+</launch>

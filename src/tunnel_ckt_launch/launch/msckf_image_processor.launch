@@ -1,0 +1,36 @@
+<launch>
+
+  <arg name="name" default="robot"/>
+  <arg name="calibration_file" default="$(find msckf_vio)/config/camchain-imucam-euroc.yaml"/>
+  <arg name="left_camera_topic" default="/cam0/image_raw"/>
+  <arg name="right_camera_topic" default="/cam1/image_raw"/>
+  <arg name="imu_topic" default="/imu0"/>
+  
+  <!-- Image Processor Nodelet  -->
+  <!--  <group ns="$(arg name)"> -->
+  <node pkg="nodelet" type="nodelet" name="image_processor"
+	args="standalone msckf_vio/ImageProcessorNodelet"
+	output="screen">
+<!--	launch-prefix="xterm -e"> -->
+    
+    <rosparam command="load" file="$(arg calibration_file)"/>
+    <param name="grid_row" value="4"/>  <!-- Default: 4  Note: this must divide img height evenly -->
+    <param name="grid_col" value="8"/>  <!-- Default: 5  Note: this must divide img width evenly -->
+    <param name="grid_min_feature_num" value="3"/>
+    <param name="grid_max_feature_num" value="4"/>
+    <param name="pyramid_levels" value="3"/>
+    <param name="patch_size" value="15"/>
+    <param name="fast_threshold" value="10"/>
+    <param name="max_iteration" value="30"/>
+    <param name="track_precision" value="0.01"/>
+    <param name="ransac_threshold" value="3"/>
+    <param name="stereo_threshold" value="5"/>
+    
+    <remap from="~imu" to="$(arg imu_topic)"/>
+    <remap from="~cam0_image" to="$(arg left_camera_topic)"/>
+    <remap from="~cam1_image" to="$(arg right_camera_topic)"/>
+    
+  </node>
+  <!-- </group> -->
+
+</launch>

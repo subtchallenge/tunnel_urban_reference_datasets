@@ -1,0 +1,10 @@
+obstacle_range: 5.5
+raytrace_range: 10.0
+robot_radius: 0.4
+inflation_radius: 0.55
+
+observation_sources: laser_scan_sensor point_cloud_sensor
+
+laser_scan_sensor: {data_type: LaserScan, topic: scan, marking: true, clearing: true}
+
+point_cloud_sensor: {data_type: PointCloud, topic: points, marking: true, clearing: true}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launch>
+  <arg name="name" />
+  <arg name="mode" default="3d"/>
+
+  <node name="cartographer_node" pkg="cartographer_ros"
+      type="cartographer_node" args="
+      -configuration_directory $(find tunnel_ckt_launch)/config/cartographer
+      -configuration_basename cartographer_$(arg mode)_$(arg name).lua"
+      output="screen">
+      <remap from="points2" to="ouster/points" />
+      <remap from="imu" to="imu_reframed/data"/>
+      <remap from="odom" to="odom_filtered"/>
+    </node>
+    <node pkg="imu_reframer" type="odom_repeat_filter_node" name="odom_repeat_filter"/>
+    <node pkg="imu_reframer" type="imu_reframer_node" name="imu_reframer"/>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="imu_tf" args="0 0 0 3.134499 0.002063 -3.117097 chinook/imu chinook/imu2"/>
+
+    <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
+      type="cartographer_occupancy_grid_node" args="-resolution 0.05" />
+</launch>
