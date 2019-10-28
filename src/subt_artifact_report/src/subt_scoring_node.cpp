@@ -29,7 +29,8 @@ tf2_ros::StaticTransformBroadcaster *tfB;
 std::string map_frame;
 
 std::vector<tf::Point> fiducials_observed;
-std::vector<std::tuple<std::string, tf::Point, int, std::string>> good_artifacts;
+std::vector<std::tuple<std::string, tf::Point, int, std::string>>
+    good_artifacts;
 std::vector<std::tuple<std::string, tf::Point, int, std::string>> bad_artifacts;
 
 ros::Publisher *marker_pub;
@@ -110,7 +111,7 @@ void PublishMarkers() {
     line_marker.pose.position.z = 0;
     line_marker.points.push_back(marker.pose.position);
     geometry_msgs::Point distal_pt;
-    distal_pt.x = gt_artifacts[std::get<2>(good_artifacts[i])].second.x(); 
+    distal_pt.x = gt_artifacts[std::get<2>(good_artifacts[i])].second.x();
     distal_pt.y = gt_artifacts[std::get<2>(good_artifacts[i])].second.y();
     distal_pt.z = gt_artifacts[std::get<2>(good_artifacts[i])].second.z();
     line_marker.points.push_back(distal_pt);
@@ -123,9 +124,10 @@ void PublishMarkers() {
     marker.id++;
     text_marker.action = visualization_msgs::Marker::ADD;
     text_marker.text = std::get<3>(good_artifacts[i]);
-    text_marker.pose.position.x = (distal_pt.x + marker.pose.position.x)/2.0;
-    text_marker.pose.position.y = (distal_pt.y + marker.pose.position.y)/2.0;
-    text_marker.pose.position.z = (distal_pt.z + marker.pose.position.z)/2.0 - 0.5; //below
+    text_marker.pose.position.x = (distal_pt.x + marker.pose.position.x) / 2.0;
+    text_marker.pose.position.y = (distal_pt.y + marker.pose.position.y) / 2.0;
+    text_marker.pose.position.z =
+        (distal_pt.z + marker.pose.position.z) / 2.0 - 0.5; // below
     text_marker.id = marker.id++;
     send_markers.markers.push_back(text_marker);
     text_marker.action = visualization_msgs::Marker::DELETE;
@@ -158,7 +160,7 @@ void PublishMarkers() {
     line_marker.pose.position.z = 0;
     line_marker.points.push_back(marker.pose.position);
     geometry_msgs::Point distal_pt;
-    distal_pt.x = gt_artifacts[std::get<2>(bad_artifacts[i])].second.x(); 
+    distal_pt.x = gt_artifacts[std::get<2>(bad_artifacts[i])].second.x();
     distal_pt.y = gt_artifacts[std::get<2>(bad_artifacts[i])].second.y();
     distal_pt.z = gt_artifacts[std::get<2>(bad_artifacts[i])].second.z();
     line_marker.points.push_back(distal_pt);
@@ -170,9 +172,10 @@ void PublishMarkers() {
     marker.id++;
     text_marker.action = visualization_msgs::Marker::ADD;
     text_marker.text = std::get<3>(bad_artifacts[i]);
-    text_marker.pose.position.x = (distal_pt.x + marker.pose.position.x)/2.0;
-    text_marker.pose.position.y = (distal_pt.y + marker.pose.position.y)/2.0;
-    text_marker.pose.position.z = (distal_pt.z + marker.pose.position.z)/2.0 - 0.5; //below
+    text_marker.pose.position.x = (distal_pt.x + marker.pose.position.x) / 2.0;
+    text_marker.pose.position.y = (distal_pt.y + marker.pose.position.y) / 2.0;
+    text_marker.pose.position.z =
+        (distal_pt.z + marker.pose.position.z) / 2.0 - 0.5; // below
     text_marker.id = marker.id++;
     send_markers.markers.push_back(text_marker);
     text_marker.action = visualization_msgs::Marker::DELETE;
@@ -363,8 +366,9 @@ double HandleReport(
       geometry_msgs::TransformStamped darpa_frame_transform;
       if (reverse_transform) {
         darpa_frame_transform.header.frame_id = map_frame;
-        darpa_frame_transform.child_frame_id = "darpa"; 
-        EigenToTransformMsg(output_transform.inverse(), darpa_frame_transform.transform);
+        darpa_frame_transform.child_frame_id = "darpa";
+        EigenToTransformMsg(output_transform.inverse(),
+                            darpa_frame_transform.transform);
       } else {
         darpa_frame_transform.header.frame_id = "darpa";
         darpa_frame_transform.child_frame_id = map_frame;
@@ -427,8 +431,8 @@ double HandleReport(
     double best_distxy = std::numeric_limits<double>::infinity();
     int ind = 0;
     int best_ind = -1;
-    for (std::vector<std::pair<std::string, tf::Point>>::const_iterator itr =
-             gt_artifacts.begin();
+    for (std::vector<std::pair<std::string, tf::Point>>::const_iterator
+             itr = gt_artifacts.begin();
          itr != gt_artifacts.end(); itr++, ind++) {
 
       if (itr->first == std::get<1>(report)) {
@@ -452,17 +456,17 @@ double HandleReport(
       }
     }
     if (closest_itr != gt_artifacts.end()) {
+      std::stringstream ss;
+      ss << std::setprecision(2) << best_dist << "m";
       if (best_dist <= 5.0) {
         std::cout << " A point scored with residual error of " << best_dist
                   << std::endl;
         points++;
-        std::stringstream ss;
-        ss << best_dist << "m";
-        good_artifacts.push_back(std::make_tuple(std::get<1>(report), pt_darpa, best_ind, ss.str()));
+        good_artifacts.push_back(
+            std::make_tuple(std::get<1>(report), pt_darpa, best_ind, ss.str()));
       } else {
-        std::stringstream ss;
-        ss << best_dist << "m";
-        bad_artifacts.push_back(std::make_tuple(std::get<1>(report), pt_darpa, best_ind, ss.str()));
+        bad_artifacts.push_back(
+            std::make_tuple(std::get<1>(report), pt_darpa, best_ind, ss.str()));
       }
       if (best_distxy <= 5.0) {
         std::cout << "A point scored if we limit to xy plane with residual "
@@ -651,7 +655,8 @@ int main(int argc, char *argv[]) {
   std::ifstream infile(gt_filename.c_str(), std::ios::in);
   if (!infile.is_open()) {
     ROS_ERROR_STREAM("Cannot judge mapping run without ground truth state. "
-                     "Please provide a gt_filename. What I have is: " << gt_filename);
+                     "Please provide a gt_filename. What I have is: "
+                     << gt_filename);
     exit(1);
   }
   std::string line;
@@ -665,7 +670,9 @@ int main(int argc, char *argv[]) {
   infile.close();
   infile.open(fiducial_file.c_str(), std::ios::in);
   if (!infile.is_open()) {
-    ROS_ERROR_STREAM("Unable to open fiducial ground truth locations. Please provide a fiducial_file. What I have is " << fiducial_file);
+    ROS_ERROR_STREAM("Unable to open fiducial ground truth locations. Please "
+                     "provide a fiducial_file. What I have is "
+                     << fiducial_file);
   }
   while (std::getline(infile, line)) {
     std::stringstream ss(line);
@@ -739,7 +746,8 @@ int main(int argc, char *argv[]) {
     }
     infile.close();
     reports.sort(sorttuple);
-    ROS_INFO_STREAM("Processing " << reports.size() << " artifact marking reports + fiducials");
+    ROS_INFO_STREAM("Processing " << reports.size()
+                                  << " artifact marking reports + fiducials");
 
     ros::Rate r(10);
     while (reports.size() != 0 && ros::ok()) {

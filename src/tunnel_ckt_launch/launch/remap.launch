@@ -103,7 +103,7 @@
     <param name="object_classes" value="$(env PWD)/object_classes"/>
     <param name="report_frame" value="$(arg name)/base"/>
     <param name="outfile" value="$(env PWD)/coded_artifacts/$(arg bag).artifacts"/>
-    <param name="gt_filename" value="$(env PWD)/gt_$(arg course)_$(arg config).csv"/>
+    <param name="gt_filename" value="$(env PWD)/GT/gt_$(arg course)_$(arg config).csv"/>
     <param name="artifacts_filename" value="$(env PWD)/coded_artifacts/$(arg bag).artifacts"/>
     <param name="output_filename" value="/var/tmp/report"/>
     <param name="use_optical_frame_report" value="false"/>
