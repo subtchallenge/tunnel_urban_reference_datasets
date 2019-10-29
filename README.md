@@ -18,6 +18,8 @@ Build:
 cd subt_reference_datasets
 catkin init
 catkin config --extend YOUR_ROS_CATKIN_WORKSPACE
+cd src
+wstool update
 catkin build -c
 source devel/setup.bash
 ```
