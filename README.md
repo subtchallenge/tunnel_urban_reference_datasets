@@ -10,34 +10,47 @@ Bag files have been compressed by "rosbag compress" to reduce download time. The
 
 USAGE:
 First, download the publich catkin workspace from : 
+
 git clone git@bitbucket.org:subtchallenge/stix_ws.git
 
 Build:
-cd stix_ws
+```cd stix_ws
 catkin init
 catkin config --extend YOUR_ROS_CATKIN_WORKSPACE
 catkin build -c
 source devel/setup.bash
-
+```
 Go to the directory where you have placed the tunnel circuit bag files
-cd ~/data/tunnel_ckt
+```cd ~/data/tunnel_ckt
 roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag reproject:=false rate:=2.0 odom_only:=true course:=sr config:=B
-
+```
 Arguments:
 
 "bag" : Non-optional argument, specify the bag file to open for this run. This should be specified as a relative path to where CWD where roslaunch is started (it is composed with PWD)
+
 "name" : Default "chinook" matches robot name used in dataset collection. 
+
 "reproject" : Optionally reproject ouster point cloud using new settings. We may provide our ouster projection node at a later date; otherwise, the user may substitute their own or find another alternative.
+
 "reodom" : Attempt to re-generate the platform odometry using joystick commands, to correct poor recorded odometry in configuration A bagfiles (not provided). This is experimental and should not be needed for configuration B runs.
+
 "rate": Bag play rate multiplier.
+
 "mark_artifacts": When set to true, the subt_scoring node will be run in marking mode, which will provide the user with an interface to code the location of artifacts for automatic scoring/ RMSE calculation. Artifacts are already coded in the coded_artifacts directory; however, users may wish to improve the coding as some artifacts were    missed.
+
 "bag_out": If true, capture an output bag file. Currently configured with our internal mapping outputs. Users should modify the rosbag record node to capture relevant data.
+
 "course": should be either "ex" for experimental, or "sr" for safety research
+
 "config": can be either A or B. Note that all bag files were taken in configuration B (for now).
 
+
 "omnimapper"
+
 "cartographer"
+
 "odom_only"
+
  These parameters optionally switch on up to one mapping system. The user should be able to source into a catkin workspace from the "subt hello world" virtual challenge codebase to get Cartographer, or set it up on their own. "odom_only" will give the results of using no mapping system by substituting a static map to odom transform. Each    of these options configures the subt_scoring node to write an RMSE output file.
 
 Scoring and RMSE computation are automatically performed by the subt_scoring node, assuming the user's mapping approach provides the map -> chinook/odom transform. 
