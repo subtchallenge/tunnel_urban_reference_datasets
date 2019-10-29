@@ -1,5 +1,5 @@
 # Tunnel Circuit DataSet README
-This quickstart guide outlines how to get started with the SubT Tunnel Circuit Dataset. For additional details, please refer to ICRA paper.                                                                                                                                                                                                           
+This quickstart guide outlines how to get started with the SubT Tunnel Circuit Dataset. For additional details, please refer to our submitted [ICRA paper](https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/ICRA2020_TunnelCktDataset.pdf).                                                                                                                                                                                                           
 
 This dataset was collected by the Army Research Laboratory on behalf of DARPA to support further system development via offline component testing in a relevant environment.
 
@@ -14,14 +14,16 @@ First, download the publich catkin workspace from :
 git clone git@bitbucket.org:subtchallenge/stix_ws.git
 
 Build:
-```cd stix_ws
+```
+cd stix_ws
 catkin init
 catkin config --extend YOUR_ROS_CATKIN_WORKSPACE
 catkin build -c
 source devel/setup.bash
 ```
 Go to the directory where you have placed the tunnel circuit bag files
-```cd ~/data/tunnel_ckt
+```
+cd ~/data/tunnel_ckt
 roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag reproject:=false rate:=2.0 odom_only:=true course:=sr config:=B
 ```
 Arguments:
