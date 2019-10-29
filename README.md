@@ -11,11 +11,11 @@ Bag files have been compressed by "rosbag compress" to reduce download time. The
 USAGE:
 First, download the publich catkin workspace from : 
 
-git clone git@bitbucket.org:subtchallenge/stix_ws.git
+git clone git@bitbucket.org:subtchallenge/subt_reference_datasets.git
 
 Build:
 ```
-cd stix_ws
+cd subt_reference_datasets
 catkin init
 catkin config --extend YOUR_ROS_CATKIN_WORKSPACE
 catkin build -c
@@ -101,7 +101,7 @@ Intrinsic calibration of this sensor was not performed, so the camera_info messa
 
 ### Microstrain IMU
 Raw microstrain imu data is recorded. This is also incorporated with the platform's odometry (which is also recorded separately) into a gvrbot/odom to gvrbot/base (base\_link?) frame. This can be stripped out if desired through the use of the tf_hijacker node which is provided in the bitbucket site at
-https://bitbucket.org/subtchallenge/stix_ws/src/master/.
+https://bitbucket.org/subtchallenge/subt_reference_datasets/src/master/.
 This project also contains helpful launch files which can be used to run these bag files.
 
 ## Other considerations
