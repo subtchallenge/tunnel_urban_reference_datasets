@@ -1,5 +1,5 @@
 # Tunnel Circuit DataSet README
-This quickstart guide outlines how to get started with the SubT Tunnel Circuit Dataset. For additional details, please refer to our submitted [ICRA paper](https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/ICRA2020_TunnelCktDataset.pdf).                                                                                                                                                                                                           
+This quickstart guide outlines how to get started with the SubT Tunnel Circuit Dataset. For additional details, please refer to our accepted [ICRA paper](https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/ICRA2020_TunnelCktDataset.pdf).                                                                                                                                                                                                           
 
 This dataset was collected by the Army Research Laboratory on behalf of DARPA to support further system development via offline component testing in a relevant environment.
 
@@ -7,6 +7,22 @@ The SubT tunnel dataset consists of three ROS bag files which were recorded on o
 At present, only Configuration B is represented in the dataset due to technical difficulties involved in the early collection process. The dataset consists of two runs in the SR course and one in the EX course.
 
 Bag files have been compressed by "rosbag compress" to reduce download time. They should still play back fine from their compressed state; however, if excessive stuttering or reduced performance is observed, the user can decompress the bag file to their full size (roughly 2x) with "rosbag decompress".
+
+Bag file data can be retrieved from these links:
+
+README/usage/etc: https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/usage.txt
+
+Support data (ground truth, object annotations):
+
+https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/support.tgz
+
+Bag files:
+
+https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/ex_B_route1.bag (33 GB)
+
+https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/sr_B_route1.bag (19.6 GB)
+
+https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/sr_B_route2.bag (16.3 GB)
 
 USAGE:
 First, download the publich catkin workspace from : 
