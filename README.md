@@ -32,12 +32,17 @@ git clone git@bitbucket.org:subtchallenge/subt_reference_datasets.git
 Build:
 ```
 cd subt_reference_datasets
+wstool update -t base_ws/src
+wstool update -t kimera_ws/src
+. apply_required_build_patches.sh
+cd base_ws
 catkin init
-catkin config --extend YOUR_ROS_CATKIN_WORKSPACE
-cd src
-wstool update
+catkin config --extend YOUR_ROS_CATKIN_WORKSPACE --merge-devel
 catkin build -c
-source devel/setup.bash
+cd ../kimera_ws
+catkin init
+catkin config --extend ../base_ws/devel --merge-devel --cmake-args -DCMAKE_BUILD_TYPE=Release
+catkin build -c
 ```
 Go to the directory where you have placed the tunnel circuit bag files
 ```

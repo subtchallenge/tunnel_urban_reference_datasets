@@ -1,0 +1,14 @@
+catkin_simple
+cmake_external_project_catkin
+dbow2_catkin
+gflags_catkin
+glog_catkin
+gtsam
+Kimera-RPGO
+kimera_rviz_markers
+Kimera-VIO
+Kimera-VIO-ROS
+mesh_rviz_plugins
+opencv3_catkin
+opengv_catkin
+pose_graph_tools
