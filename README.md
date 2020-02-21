@@ -35,14 +35,16 @@ cd subt_reference_datasets
 wstool update -t base_ws/src
 wstool update -t kimera_ws/src
 . apply_required_build_patches.sh
+rosdep install -y --from-paths base_ws/src --ignore-src --rosdistro melodic
+rosdep install -y --from-paths kimera_ws/src --ignore-src --rosdistro melodic
 cd base_ws
 catkin init
-catkin config --extend YOUR_ROS_CATKIN_WORKSPACE --merge-devel
-catkin build -c
+catkin config --extend YOUR_ROS_CATKIN_WORKSPACE --merge-devel --cmake-args -DCMAKE_BUILD_TYPE=Release
+catkin build
 cd ../kimera_ws
 catkin init
 catkin config --extend ../base_ws/devel --merge-devel --cmake-args -DCMAKE_BUILD_TYPE=Release
-catkin build -c
+catkin build
 ```
 Go to the directory where you have placed the tunnel circuit bag files
 ```
