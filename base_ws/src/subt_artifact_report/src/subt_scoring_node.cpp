@@ -693,6 +693,8 @@ int main(int argc, char *argv[]) {
     private_nh.param("image", image_name, std::string("image"));
     private_nh.param("depth_image", depth_image_name,
                      std::string("depth_image"));
+    std::string depth_transport;
+    private_nh.param("depth_transport", depth_transport, std::string("compressedDepth"));
 
     cv::setMouseCallback("image", onMouse, &md);
     ros::Subscriber info_sub = nh.subscribe<sensor_msgs::CameraInfo>(
@@ -702,7 +704,7 @@ int main(int argc, char *argv[]) {
         it, image_name, 50, image_transport::TransportHints("compressed"));
     image_transport::SubscriberFilter depth_img_sub(
         it, depth_image_name, 50,
-        image_transport::TransportHints("compressedDepth"));
+        image_transport::TransportHints(depth_transport));
     typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,
                                                             sensor_msgs::Image>
         MySyncPolicy;
@@ -711,7 +713,7 @@ int main(int argc, char *argv[]) {
     sync.registerCallback(boost::bind(&onImagesScoring, &md, _1, _2));
 
     while (ros::ok()) {
-      cv::waitKey(5);
+      cv::waitKey(30);
       ros::spinOnce();
     }
     cv::destroyAllWindows();
