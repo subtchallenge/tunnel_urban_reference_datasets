@@ -5,6 +5,8 @@
   <arg name="reproject" default="false"/>
   <arg name="reodom" default="false"/>
   <arg name="noodom" default="false"/> <!-- A setting for cartographer since it can make odom transform -->
+  <arg name="odom_config_1" default="false"/>
+  <arg name="odom_config_2" default="false"/>
   <arg name="stix_mode" default="false"/>
 
   <arg name="rate" default="1.0"/>
@@ -143,6 +145,8 @@
         <arg name="lidar_topic" value="lidar_points"/>
         <arg name="odom_topic" value="raw_odom"/>
         <arg name="odom_frame" value="$(arg name)/base"/>
+        <arg name="odom_config_1" value="$(arg odom_config_1)"/>
+        <arg name="odom_config_2" value="$(arg odom_config_2)"/>
       </include>
     </group>
     <group if="$(arg gmapping)">

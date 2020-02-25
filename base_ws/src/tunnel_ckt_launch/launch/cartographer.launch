@@ -5,6 +5,8 @@
   <arg name="lidar_topic" default="ouster/points"/>
   <arg name="odom_topic" default="odom"/>
   <arg name="odom_frame" default="na"/>
+  <arg name="odom_config_1" default="true"/>
+  <arg name="odom_config_2" default="false"/>
 
   <node name="cartographer_node" pkg="cartographer_ros"
       type="cartographer_node" args="
@@ -23,8 +25,8 @@
       <param name="new_frame" value="$(arg name)/imu2"/>
     </node>
     <!--<node pkg="tf2_ros" type="static_transform_publisher" name="imu_tf" args="0 0 0 3.134499 0.002063 -3.117097 $(arg name)/imu_link $(arg name)/imu2"/>-->
-    <!--<node pkg="tf2_ros" type="static_transform_publisher" name="imu_tf" args="0 0 0 -1.5708 1.5708 1.5708 $(arg name)/imu_link $(arg name)/imu2"/>-->
-    <node pkg="tf2_ros" type="static_transform_publisher" name="imu_tf" args="0 0 0 -1.5708 1.5708 1.5708 $(arg name)/imu_link $(arg name)/imu2"/>
+    <node if="$(arg odom_config_1)" pkg="tf2_ros" type="static_transform_publisher" name="imu_tf" args="0 0 0 -1.5708 1.5708 1.5708 $(arg name)/imu_link $(arg name)/imu2"/>
+    <node if="$(arg odom_config_2)" pkg="tf2_ros" type="static_transform_publisher" name="imu_tf" args="0 0 0 0 0 0 $(arg name)/imu_link $(arg name)/imu2"/>
 
     <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
       type="cartographer_occupancy_grid_node" args="-resolution 0.05" />

@@ -254,7 +254,7 @@ Visualization Manager:
         All: true
         All Submap Pose Markers: true
         Trajectory 0:
-          0.118: true
+          0.72: true
           Submap Pose Markers: true
           Value: true
       Topic: /sherman/submap_list
@@ -326,6 +326,36 @@ Visualization Manager:
         Intra residuals: true
       Queue Size: 100
       Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 2451
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /sherman/lidar_points
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 100; 100; 100
@@ -354,25 +384,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 40.80730056762695
+      Distance: 32.355567932128906
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -2.8542697429656982
-        Y: -0.8468046188354492
-        Z: -1.3828277587890625e-5
+        X: -6.631714820861816
+        Y: 0.6235290765762329
+        Z: -1.5147254089242779e-5
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5297954082489014
+      Pitch: 1.5697963237762451
       Target Frame: sherman/base
       Value: ThirdPersonFollower (rviz)
-      Yaw: 3.141590118408203
+      Yaw: 3.146589994430542
     Saved: ~
 Window Geometry:
   Displays:
