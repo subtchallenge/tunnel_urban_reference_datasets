@@ -1,6 +1,6 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 78
+    Help Height: 138
     Name: Displays
     Property Tree Widget:
       Expanded:
@@ -11,7 +11,7 @@ Panels:
         - /Ground Truth1
         - /Ground Truth1/Shape1
       Splitter Ratio: 0.5
-    Tree Height: 796
+    Tree Height: 1645
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -79,81 +79,71 @@ Visualization Manager:
       Frame Timeout: 1000
       Frames:
         All Enabled: false
-        chinook/base:
-          Value: true
-        chinook/base_footprint:
-          Value: true
-        chinook/base_link:
-          Value: true
-        chinook/boson:
-          Value: true
-        chinook/front_bumper_link:
-          Value: true
-        chinook/front_left_wheel_link:
-          Value: true
-        chinook/front_right_wheel_link:
-          Value: true
-        chinook/imu:
-          Value: true
-        chinook/imu_link:
-          Value: true
-        chinook/inertial_link:
-          Value: true
-        chinook/multisense/accel:
-          Value: true
-        chinook/multisense/center_bottom_led_frame:
-          Value: true
-        chinook/multisense/center_top_led_frame:
-          Value: true
-        chinook/multisense/gyro:
-          Value: true
-        chinook/multisense/head:
-          Value: true
-        chinook/multisense/head_hokuyo_frame:
-          Value: true
-        chinook/multisense/hokuyo_link:
-          Value: true
-        chinook/multisense/left_camera_frame:
-          Value: true
-        chinook/multisense/left_camera_optical_frame:
-          Value: true
-        chinook/multisense/left_led_frame:
-          Value: true
-        chinook/multisense/mag:
-          Value: true
-        chinook/multisense/motor:
-          Value: true
-        chinook/multisense/right_camera_frame:
-          Value: true
-        chinook/multisense/right_camera_optical_frame:
-          Value: true
-        chinook/multisense/right_led_frame:
-          Value: true
-        chinook/multisense/spindle:
-          Value: true
-        chinook/ouster:
-          Value: true
-        chinook/ouster_imu:
-          Value: true
-        chinook/ouster_lidar:
-          Value: true
-        chinook/rear_bumper_link:
-          Value: true
-        chinook/rear_left_wheel_link:
-          Value: true
-        chinook/rear_right_wheel_link:
-          Value: true
-        chinook/top_chassis_link:
-          Value: true
-        chinook/top_plate_front_link:
-          Value: true
-        chinook/top_plate_link:
-          Value: true
-        chinook/top_plate_rear_link:
-          Value: true
-        chinook/user_rail_link:
+        imu_link:
           Value: true
         map:
+          Value: true
+        odom:
+          Value: true
+        sherman/base:
+          Value: true
+        sherman/base_footprint:
+          Value: true
+        sherman/base_link:
+          Value: true
+        sherman/boson_forward_link:
+          Value: true
+        sherman/boson_up_link:
+          Value: true
+        sherman/imu_link:
+          Value: true
+        sherman/imu_link_ned:
+          Value: true
+        sherman/inertial_link:
+          Value: true
+        sherman/microstrain_link:
+          Value: true
+        sherman/multisense/accel:
+          Value: true
+        sherman/multisense/center_bottom_led_frame:
+          Value: true
+        sherman/multisense/center_top_led_frame:
+          Value: true
+        sherman/multisense/gyro:
+          Value: true
+        sherman/multisense/head:
+          Value: true
+        sherman/multisense/head_hokuyo_frame:
+          Value: true
+        sherman/multisense/hokuyo_link:
+          Value: true
+        sherman/multisense/left_camera_frame:
+          Value: true
+        sherman/multisense/left_camera_optical_frame:
+          Value: true
+        sherman/multisense/left_led_frame:
+          Value: true
+        sherman/multisense/mag:
+          Value: true
+        sherman/multisense/motor:
+          Value: true
+        sherman/multisense/right_camera_frame:
+          Value: true
+        sherman/multisense/right_camera_optical_frame:
+          Value: true
+        sherman/multisense/right_led_frame:
+          Value: true
+        sherman/multisense/spindle:
+          Value: true
+        sherman/multisense_link:
+          Value: true
+        sherman/ouster_imu:
+          Value: true
+        sherman/ouster_lidar:
+          Value: true
+        sherman/ouster_link:
+          Value: true
+        sherman/sensor_plate_link:
           Value: true
       Marker Scale: 4
       Name: TF
@@ -162,69 +152,51 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          chinook/base:
-            chinook/base_footprint:
+          {}
+        sherman/base:
+          sherman/base_link:
+            sherman/base_footprint:
               {}
-            chinook/base_link:
-              chinook/front_bumper_link:
+            sherman/imu_link:
+              sherman/imu_link_ned:
                 {}
-              chinook/front_left_wheel_link:
-                {}
-              chinook/front_right_wheel_link:
-                {}
-              chinook/imu_link:
-                {}
-              chinook/inertial_link:
-                {}
-              chinook/rear_bumper_link:
-                {}
-              chinook/rear_left_wheel_link:
-                {}
-              chinook/rear_right_wheel_link:
-                {}
-              chinook/top_chassis_link:
-                {}
-              chinook/top_plate_link:
-                chinook/top_plate_front_link:
-                  {}
-                chinook/top_plate_rear_link:
-                  {}
-              chinook/user_rail_link:
-                {}
-            chinook/boson:
+            sherman/inertial_link:
               {}
-            chinook/imu:
-              {}
-            chinook/multisense/head:
-              chinook/multisense/accel:
+            sherman/sensor_plate_link:
+              sherman/boson_forward_link:
                 {}
-              chinook/multisense/center_bottom_led_frame:
+              sherman/boson_up_link:
                 {}
-              chinook/multisense/center_top_led_frame:
+              sherman/microstrain_link:
                 {}
-              chinook/multisense/gyro:
-                {}
-              chinook/multisense/left_camera_frame:
-                chinook/multisense/left_camera_optical_frame:
-                  chinook/multisense/motor:
-                    chinook/multisense/spindle:
-                      chinook/multisense/hokuyo_link:
-                        chinook/multisense/head_hokuyo_frame:
-                          {}
-              chinook/multisense/left_led_frame:
-                {}
-              chinook/multisense/mag:
-                {}
-              chinook/multisense/right_camera_frame:
-                chinook/multisense/right_camera_optical_frame:
+              sherman/multisense_link:
+                sherman/multisense/head:
+                  sherman/multisense/accel:
+                    {}
+                  sherman/multisense/center_bottom_led_frame:
+                    {}
+                  sherman/multisense/center_top_led_frame:
+                    {}
+                  sherman/multisense/gyro:
+                    {}
+                  sherman/multisense/left_camera_frame:
+                    sherman/multisense/left_camera_optical_frame:
+                      sherman/multisense/motor:
+                        {}
+                  sherman/multisense/left_led_frame:
+                    {}
+                  sherman/multisense/mag:
+                    {}
+                  sherman/multisense/right_camera_frame:
+                    sherman/multisense/right_camera_optical_frame:
+                      {}
+                  sherman/multisense/right_led_frame:
+                    {}
+              sherman/ouster_link:
+                sherman/ouster_imu:
                   {}
-              chinook/multisense/right_led_frame:
-                {}
-            chinook/ouster:
-              chinook/ouster_imu:
-                {}
-              chinook/ouster_lidar:
-                {}
+                sherman/ouster_lidar:
+                  {}
       Update Interval: 0
       Value: true
     - Angle Tolerance: 0
@@ -292,7 +264,7 @@ Visualization Manager:
         Shaft Length: 1
         Shaft Radius: 0.10000000149011612
         Value: Arrow
-      Topic: /chinook/vio/odom
+      Topic: /sherman/vio/odom
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -320,14 +292,14 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 1
       Style: Points
-      Topic: /chinook/vio/feature_point_cloud
+      Topic: /sherman/vio/feature_point_cloud
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /chinook/image_processor/debug_stereo_image
+      Image Topic: /sherman/image_processor/debug_stereo_image
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -368,7 +340,7 @@ Visualization Manager:
         Shaft Length: 1
         Shaft Radius: 0.05000000074505806
         Value: Arrow
-      Topic: /chinook/vio/gt_odom
+      Topic: /sherman/vio/gt_odom
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -398,7 +370,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: chinook/base
+    Fixed Frame: sherman/base
     Frame Rate: 30
   Name: root
   Tools:
@@ -422,16 +394,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 65.93476867675781
+      Distance: 49.917335510253906
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.3427094519138336
-        Y: -0.7974743247032166
-        Z: 0.7602786421775818
+        X: 1.7337318658828735
+        Y: 1.9384125471115112
+        Z: 0.7169666290283203
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -445,10 +417,10 @@ Visualization Manager:
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1025
+  Height: 2049
   Hide Left Dock: false
   Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd0000000400000000000001b3000003a7fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000003a7000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c0000026100000001000001a2000003dafc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000028000003da000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000053d0000016dfc0100000004fb0000001e00530074006500720065006f0020004600650061007400750072006500730300000043000002dc0000038a0000013cfb0000001e00530074006500720065006f0020004600650061007400750072006500730100000000000005510000000000000000fb0000000800540069006d0065000000000000000556000002eb00fffffffb0000000800540069006d0065010000000000000450000000000000000000000584000003a700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001f700000765fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b000000b000fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000006e000007650000018200fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c0000026100000001000001a2000003dafc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000028000003da0000013200fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000053d0000016dfc0100000004fb0000001e00530074006500720065006f0020004600650061007400750072006500730300000086000002dc0000038a0000013cfb0000001e00530074006500720065006f0020004600650061007400750072006500730100000000000005510000000000000000fb0000000800540069006d00650000000000000005560000057100fffffffb0000000800540069006d0065010000000000000450000000000000000000000c770000076500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Stereo Features:
@@ -459,6 +431,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: true
-  Width: 1853
-  X: 67
-  Y: 27
+  Width: 3706
+  X: 134
+  Y: 55

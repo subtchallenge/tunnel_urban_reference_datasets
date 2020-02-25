@@ -22,7 +22,8 @@ void handleImu(const sensor_msgs::Imu::ConstPtr &data) {
 int main(int argc, char **argv) {
   ros::init(argc, argv, "imu_reframer");
   ros::NodeHandle nh;
-  nh.param("new_frame", new_frame, std::string("chinook/imu2"));
+  ros::NodeHandle pnh("~");
+  pnh.param("new_frame", new_frame, std::string("chinook/imu2"));
   ros::Publisher publ = nh.advertise<sensor_msgs::Imu>("imu_reframed/data", 10);
   pub = &publ;
   ros::Subscriber sub = nh.subscribe("imu/data", 10, &handleImu);

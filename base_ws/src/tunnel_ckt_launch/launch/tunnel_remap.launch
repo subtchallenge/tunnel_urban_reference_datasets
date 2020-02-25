@@ -204,8 +204,8 @@
       <include if="$(arg orbslam)" file="$(find tunnel_ckt_launch)/launch/orb_slam2_multisense.launch">
         <arg name="name" value="$(arg name)"/>
         <arg name="pointcloud_frame" value="map"/>
-        <arg name="camera_frame" value="$(arg name)/multisense/left_camera_frame"/>
-        <arg name="left_camera_topic" value="/$(arg name)/multisense/left/image_rect_mono"/>
+        <arg name="camera_frame" value="/$(arg name)/multisense/left_camera_frame"/>
+        <arg name="left_camera_topic" value="/$(arg name)/multisense/left/image_rect_color_raw"/>
         <arg name="right_camera_topic" value="/$(arg name)/multisense/right/image_rect_mono"/>
         <arg name="depth_topic" value="/$(arg name)/multisense/depth"/>
         <arg name="rgbd_mode" value="true"/>

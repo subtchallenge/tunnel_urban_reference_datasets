@@ -1,0 +1,394 @@
+Panels:
+  - Class: rviz/Displays
+    Help Height: 138
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /PointCloud23/Autocompute Value Bounds1
+      Splitter Ratio: 0.6006709933280945
+    Tree Height: 270
+  - Class: rviz/Selection
+    Name: Selection
+  - Class: rviz/Tool Properties
+    Expanded:
+      - /2D Pose Estimate1
+      - /2D Nav Goal1
+      - /Publish Point1
+    Name: Tool Properties
+    Splitter Ratio: 0.5886790156364441
+  - Class: rviz/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+  - Class: rviz/Time
+    Experimental: false
+    Name: Time
+    SyncMode: 0
+    SyncSource: PointCloud2
+Preferences:
+  PromptSaveOnExit: true
+Toolbars:
+  toolButtonStyle: 2
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz/Grid
+      Color: 160; 160; 164
+      Enabled: false
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 100
+      Reference Frame: <Fixed Frame>
+      Value: false
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        imu_link:
+          Value: true
+        map:
+          Value: true
+        odom:
+          Value: true
+        sherman/base:
+          Value: true
+        sherman/base_footprint:
+          Value: true
+        sherman/base_link:
+          Value: true
+        sherman/boson_forward_link:
+          Value: true
+        sherman/boson_up_link:
+          Value: true
+        sherman/imu2:
+          Value: true
+        sherman/imu_link:
+          Value: true
+        sherman/imu_link_ned:
+          Value: true
+        sherman/inertial_link:
+          Value: true
+        sherman/microstrain_link:
+          Value: true
+        sherman/multisense/accel:
+          Value: true
+        sherman/multisense/center_bottom_led_frame:
+          Value: true
+        sherman/multisense/center_top_led_frame:
+          Value: true
+        sherman/multisense/gyro:
+          Value: true
+        sherman/multisense/head:
+          Value: true
+        sherman/multisense/head_hokuyo_frame:
+          Value: true
+        sherman/multisense/hokuyo_link:
+          Value: true
+        sherman/multisense/left_camera_frame:
+          Value: true
+        sherman/multisense/left_camera_optical_frame:
+          Value: true
+        sherman/multisense/left_led_frame:
+          Value: true
+        sherman/multisense/mag:
+          Value: true
+        sherman/multisense/motor:
+          Value: true
+        sherman/multisense/right_camera_frame:
+          Value: true
+        sherman/multisense/right_camera_optical_frame:
+          Value: true
+        sherman/multisense/right_led_frame:
+          Value: true
+        sherman/multisense/spindle:
+          Value: true
+        sherman/multisense_link:
+          Value: true
+        sherman/odom:
+          Value: true
+        sherman/ouster_imu:
+          Value: true
+        sherman/ouster_lidar:
+          Value: true
+        sherman/ouster_link:
+          Value: true
+        sherman/sensor_plate_link:
+          Value: true
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        map:
+          sherman/odom:
+            sherman/base:
+              sherman/base_link:
+                sherman/base_footprint:
+                  {}
+                sherman/imu_link:
+                  sherman/imu2:
+                    {}
+                  sherman/imu_link_ned:
+                    {}
+                sherman/inertial_link:
+                  {}
+                sherman/sensor_plate_link:
+                  sherman/boson_forward_link:
+                    {}
+                  sherman/boson_up_link:
+                    {}
+                  sherman/microstrain_link:
+                    {}
+                  sherman/multisense_link:
+                    sherman/multisense/head:
+                      sherman/multisense/accel:
+                        {}
+                      sherman/multisense/center_bottom_led_frame:
+                        {}
+                      sherman/multisense/center_top_led_frame:
+                        {}
+                      sherman/multisense/gyro:
+                        {}
+                      sherman/multisense/left_camera_frame:
+                        sherman/multisense/left_camera_optical_frame:
+                          sherman/multisense/motor:
+                            {}
+                      sherman/multisense/left_led_frame:
+                        {}
+                      sherman/multisense/mag:
+                        {}
+                      sherman/multisense/right_camera_frame:
+                        sherman/multisense/right_camera_optical_frame:
+                          {}
+                      sherman/multisense/right_led_frame:
+                        {}
+                  sherman/ouster_link:
+                    sherman/ouster_imu:
+                      {}
+                    sherman/ouster_lidar:
+                      {}
+      Update Interval: 0
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 7.626500129699707
+        Min Value: 5.666669845581055
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 20; 220; 20
+      Color Transformer: FlatColor
+      Decay Time: 0.10000000149011612
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 200
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.029999999329447746
+      Style: Flat Squares
+      Topic: /horizontal_laser_3d
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 5.608699798583984
+        Min Value: 3.778749942779541
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 240; 220; 20
+      Color Transformer: FlatColor
+      Decay Time: 0.10000000149011612
+      Enabled: true
+      Invert Rainbow: true
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 200
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.029999999329447746
+      Style: Flat Squares
+      Topic: /vertical_laser_3d
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Class: Submaps
+      Enabled: true
+      Fade-out distance: 1
+      High Resolution: true
+      Low Resolution: false
+      Name: Submaps
+      Submap query service: /submap_query
+      Submaps:
+        All: true
+        All Submap Pose Markers: true
+        Trajectory 0:
+          0.118: true
+          Submap Pose Markers: true
+          Value: true
+      Topic: /sherman/submap_list
+      Tracking frame: base_link
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: false
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 0; 255; 0
+      Color Transformer: AxisColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 20
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.05000000074505806
+      Style: Flat Squares
+      Topic: /sherman/scan_matched_points2
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /sherman/trajectory_node_list
+      Name: Trajectories
+      Namespaces:
+        Trajectory 0: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /sherman/landmark_poses_list
+      Name: Landmark Poses
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic: /sherman/map
+      Unreliable: false
+      Use Timestamp: false
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /sherman/constraint_list
+      Name: MarkerArray
+      Namespaces:
+        Intra constraints: true
+        Intra residuals: true
+      Queue Size: 100
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 100; 100; 100
+    Default Light: true
+    Fixed Frame: map
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz/Interact
+      Hide Inactive Objects: true
+    - Class: rviz/MoveCamera
+    - Class: rviz/Select
+    - Class: rviz/FocusCamera
+    - Class: rviz/Measure
+    - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
+      Topic: /initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
+    - Class: rviz/SetGoal
+      Topic: /move_base_simple/goal
+    - Class: rviz/PublishPoint
+      Single click: true
+      Topic: /clicked_point
+  Value: true
+  Views:
+    Current:
+      Class: rviz/ThirdPersonFollower
+      Distance: 40.80730056762695
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: -2.8542697429656982
+        Y: -0.8468046188354492
+        Z: -1.3828277587890625e-5
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05000000074505806
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 1.5297954082489014
+      Target Frame: sherman/base
+      Value: ThirdPersonFollower (rviz)
+      Yaw: 3.141590118408203
+    Saved: ~
+Window Geometry:
+  Displays:
+    collapsed: true
+  Height: 2049
+  Hide Left Dock: true
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd0000000400000000000003fa000006fffc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b000000b000fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073000000006e000006ff0000018200fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000015f000006fffc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000006e000006ff0000013200fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000e7a0000005afc0100000002fb0000000800540069006d0065010000000000000e7a0000057100fffffffb0000000800540069006d0065010000000000000450000000000000000000000d0f000006ff00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Selection:
+    collapsed: false
+  Time:
+    collapsed: false
+  Tool Properties:
+    collapsed: false
+  Views:
+    collapsed: false
+  Width: 3706
+  X: 134
+  Y: 55
