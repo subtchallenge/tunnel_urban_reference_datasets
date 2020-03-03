@@ -24,8 +24,8 @@
        <!-- static parameters -->
        <param name="load_map" type="bool" value="false" />
        <param name="map_file" type="string" value="map.bin" />
-       <param unless="$(arg rgbd_mode)" name="settings_file" type="string" value="$(find tunnel_ckt_launch)/config/orb_slam_2/MultisenseStereo.yaml" />
-       <param if="$(arg rgbd_mode)" name="settings_file" type="string" value="$(find tunnel_ckt_launch)/config/orb_slam_2/MultisenseRGBD.yaml" />
+       <param unless="$(arg rgbd_mode)" name="settings_file" type="string" value="$(find urban_ckt_launch)/config/orb_slam_2/MultisenseStereo.yaml" />
+       <param if="$(arg rgbd_mode)" name="settings_file" type="string" value="$(find urban_ckt_launch)/config/orb_slam_2/MultisenseRGBD.yaml" />
        <param name="voc_file" type="string" value="$(find orb_slam2_ros)/orb_slam2/Vocabulary/ORBvoc.txt" />
 
        <param name="pointcloud_frame_id" type="string" value="$(arg pointcloud_frame)" />

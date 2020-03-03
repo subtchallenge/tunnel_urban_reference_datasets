@@ -10,7 +10,7 @@
 
   <node name="cartographer_node" pkg="cartographer_ros"
       type="cartographer_node" args="
-      -configuration_directory $(find tunnel_ckt_launch)/config/cartographer
+      -configuration_directory $(find urban_ckt_launch)/config/cartographer
       -configuration_basename cartographer_$(arg mode)_$(arg name).lua"
       output="screen">
       <remap from="points2" to="$(arg lidar_topic)" />

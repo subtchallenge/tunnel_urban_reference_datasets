@@ -2,13 +2,13 @@
 
   <arg name="name" default="robot"/>
   <arg name="fixed_frame_id" default="world"/>
-  <arg name="calibration_file" default="$(find tunnel_ckt_launch)/config/msckf/multisense-camera-robot-imu.yaml"/>
+  <arg name="calibration_file" default="$(find urban_ckt_launch)/config/msckf/multisense-camera-robot-imu.yaml"/>
   <arg name="left_camera_topic" default="/cam0/image_raw"/>
   <arg name="right_camera_topic" default="/cam1/image_raw"/>
   <arg name="imu_topic" default="/imu0"/>
 
   <!-- Image Processor Nodelet  -->
-  <include file="$(find tunnel_ckt_launch)/launch/msckf_image_processor.launch">
+  <include file="$(find urban_ckt_launch)/launch/msckf_image_processor.launch">
     <arg name="name" value="$(arg name)"/>
     <arg name="calibration_file" value="$(arg calibration_file)"/>
     <arg name="left_camera_topic" value="$(arg left_camera_topic)"/>
