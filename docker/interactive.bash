@@ -64,7 +64,7 @@ for WS_DIR in ${WORKSPACES[@]}
 do
   echo $WS_DIR
   WS_DIRNAME=$(basename $WS_DIR)
-  if [ ! -d $WS_DIR/src ]
+  if [ ! -d $WS_DIR/base_ws/src ]
   then
     echo "Other! $WS_DIR"
     DOCKER_OPTS="$DOCKER_OPTS -v $WS_DIR:/home/developer/other/$WS_DIRNAME"

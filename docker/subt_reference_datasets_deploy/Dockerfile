@@ -64,7 +64,6 @@ WORKDIR /home/developer
 # Clone/Update Repository
 RUN git clone https://git@bitbucket.org/jgrogers/subt_reference_datasets.git \
   && cd subt_reference_datasets \
-  && git checkout devel/kimera_reorganization \
   && wstool update -t base_ws/src \
   && wstool update -t kimera_ws/src \
   && ./apply_required_build_patches.sh
