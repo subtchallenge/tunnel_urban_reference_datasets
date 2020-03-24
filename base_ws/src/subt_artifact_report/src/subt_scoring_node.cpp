@@ -27,6 +27,7 @@ std::map<string, tf::Point> fiducial_point_darpa_frame;
 tf::TransformListener *tfL;
 tf2_ros::StaticTransformBroadcaster *tfB;
 std::string map_frame;
+bool assume_flat_initialization = false;
 
 std::vector<tf::Point> fiducials_observed;
 std::vector<std::tuple<std::string, tf::Point, int, std::string>>
@@ -279,6 +280,12 @@ double getRMSE(const std::set<double> &residuals) {
   MSE = MSE / static_cast<double>(residuals.size());
   return sqrt(MSE);
 }
+geometry_msgs::TransformStamped flattenTransform(const geometry_msgs::TransformStamped& darpa_frame_transform) {
+  geometry_msgs::TransformStamped out = darpa_frame_transform;
+  out.transform.rotation = tf::createQuaternionMsgFromYaw(tf::getYaw(out.transform.rotation));
+
+  return out;
+}
 
 double HandleReport(
     const std::tuple<double, std::string, tf::Stamped<tf::Point>> &report,
@@ -375,8 +382,11 @@ double HandleReport(
         EigenToTransformMsg(output_transform, darpa_frame_transform.transform);
       }
       darpa_frame_transform.header.stamp = ros::Time::now();
-      //      CvMatToTransformMsg(cvoutput_transform,
-      //      darpa_frame_transform.transform);
+      // Optionally zero out pitch type darpa->map, as this is likely to be near zero and is susceptible
+      // to error amplified by ranging error to the targets
+      // In the case of the alpha dataset, distal fiducial is not helpful in correcting this error
+      if (assume_flat_initialization) 
+        darpa_frame_transform = flattenTransform(darpa_frame_transform);
       tfB->sendTransform(darpa_frame_transform);
       // cv::estimateAffine3D(src, dest, affine_transform, inliers);
       // printMat(output_transform);
@@ -642,6 +652,7 @@ int main(int argc, char *argv[]) {
   private_nh.param("rmse_filename", rmse_filename,
                    std::string("/var/tmp/rmse"));
   private_nh.param("coding_mode", coding_mode, false);
+  private_nh.param("assume_flat_initialization", assume_flat_initialization, false);
 
   // Hideous, lazy
   tf::TransformListener tfL_;
@@ -649,7 +660,7 @@ int main(int argc, char *argv[]) {
   tf2_ros::StaticTransformBroadcaster tfB_;
   tfB = &tfB_;
   ros::Publisher marker_pub_ =
-      nh.advertise<visualization_msgs::MarkerArray>("SubT_markers", 1);
+      nh.advertise<visualization_msgs::MarkerArray>("SubT_markers", 1, true);
   marker_pub = &marker_pub_;
 
   std::ifstream infile(gt_filename.c_str(), std::ios::in);
@@ -666,6 +677,8 @@ int main(int argc, char *argv[]) {
     double x, y, z;
     ss >> label >> x >> y >> z;
     gt_artifacts.push_back(std::make_pair(label, tf::Point(x, y, z)));
+    std::cout << "Parsed ground truth artifact " << label
+      << " at : (" << x << ", " << y << ", " << z << ")" << std::endl;
   }
   infile.close();
   infile.open(fiducial_file.c_str(), std::ios::in);

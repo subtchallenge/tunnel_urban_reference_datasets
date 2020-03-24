@@ -1,7 +1,34 @@
 # Tunnel Circuit DataSet README
-This quickstart guide outlines how to get started with the SubT Tunnel Circuit Dataset. For additional details, please refer to our accepted [ICRA paper](https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/ICRA2020_TunnelCktDataset.pdf).                                                                                                                                                                                                           
+This quickstart guide outlines how to get started with the SubT Tunnel and Urban Circuit Datasets. For additional details, please refer to our paper about the previous Tunnel circuit. [ICRA paper](https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/ICRA2020_TunnelCktDataset.pdf).                                                                                                                                                                                                           
 
-This dataset was collected by the Army Research Laboratory on behalf of DARPA to support further system development via offline component testing in a relevant environment.
+These datasets were collected by the Army Research Laboratory on behalf of DARPA to support further system development via offline component testing in a relevant environment.
+
+Urban:
+
+The SubT urban dataset consists of four ROS bag files which were recorded on our "GVRbot", which is a modified iRobot PackBot Explorer developed at the Ground Vehicle Systems Center (GVSC), formerly known as TARDEC. This robot is a tracked skid-steer chassis equipped with forward mounted flippers to assist with stair descent as well as traversing taller obstacles. The sensor loadout is similar to the Husky described below in the Tunnel section. The robot is equipped with an Ouster OS1-64 LiDAR mounted in an elevated placement to avoid self-occlusion. The robot is also equipped with a Multisense SL which provides a secondary LiDAR system as well as stereo vision and illumination. We have also added an SCD-30 CO2 sensor for the gas artifact. Unfortunately, the Thermal IR camera(s) mounted on the robots did not record useable data due to a compression parameter mistake.
+
+The message files used to handle the SCD-30 data can be found in the support code described in the tunnel section below. Note that it has been restructured somewhat since the Tunnel circuit to include an additional workspace to support the Kimera VIO analysis which is still a work in progress. There are now two workspaces under the subt_reference_datasets project. Users should probably only focus on the base_ws for now.
+
+On this release, the bag files are compressed with the lz4 option to greatly reduce their size for transmission. On our own analysis, decompressing them during playback is too slow, so they should be decompressed by the user via rosbag decompress prior to use.
+
+Bag file description and links:
+
+Alpha course, upper floor. Configuration 2:
+https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/a_lvl_1.bag
+
+Alpha course, lower floor. Configuration 2. Robot goes down the stairs shortly after start:
+https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/a_lvl_2.bag
+
+Beta course, upper floor. Configuration 2:
+https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/b_lvl_1.bag
+
+Beta course, lower floor. Goes pretty far to get to stairs. Ouster data not available due to equipment failure (DC converter):
+https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/b_lvl_2.bag
+
+Support data for the analysis from the ICRA paper is being processed and will be available at this link:
+https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/support.tgz
+
+Tunnel:
 
 The SubT tunnel dataset consists of three ROS bag files which were recorded on our Clearpath Husky robot during teleoperation within the Safety Research (SR) and Experimental (EX) courses. 
 At present, only Configuration B is represented in the dataset due to technical difficulties involved in the early collection process. The dataset consists of two runs in the SR course and one in the EX course.
