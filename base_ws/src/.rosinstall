@@ -13,6 +13,9 @@
 - git:
     local-name: msckf_vio
     uri: https://github.com/KumarRobotics/msckf_vio.git
+- hg:
+    local-name: multisense-ros
+    uri: https://bitbucket.org/crl/multisense_ros
 - git:
     local-name: orb_slam_2_ros
     uri: https://github.com/appliedAI-Initiative/orb_slam_2_ros.git

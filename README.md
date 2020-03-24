@@ -76,7 +76,7 @@ catkin build
 Go to the directory where you have placed the tunnel circuit bag files
 ```
 cd ~/data/tunnel_ckt
-roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag reproject:=false rate:=2.0 odom_only:=true course:=sr config:=B
+roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag rate:=2.0 odom_only:=true course:=sr config:=B
 ```
 Arguments:
 
@@ -120,7 +120,20 @@ Fiducial tracks were automatically inserted into the coding file. The global "da
 Fiducial tracking was performed automatically by the coding node and is inserted into the coding file. Only the final observation of each fiducial is used, under the assumption that this one is the closest to the vehicle and therefore will have the best range accuracy.
 Scores are updated when an artifact is observed via composing the darpa -> map frame + the user's map-> chinook/odom frame correction with the recorded chinook/odom -> chinook/base transform and the coded local position. This resulting global position is compared with the ground truth file; a point is scored if the position is within 5     meters of an artifact with the same label. RMSE is updated by all artifact reports even if they are too inaccurate to achieve a scored point.
 
-
+Some other examples of launch commands are as follows:  
+Odom Only:  
+```
+roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag odom_only:=true course:=sr config:=B
+```
+Cartographer:  
+```
+roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag cartographer:=true noodom:=true course:=sr config:=B
+```
+ORB-SLAM2:  
+```
+roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag orbslam:=true course:=sr config:=B
+```
+**Note: If you are utilized the compressed bags and the `/clock` topic is intermittent, use a playback rate of <1. I recommend a playback rate of 0.25 to 0.5**  
 
 # STIX DataSet README
 
