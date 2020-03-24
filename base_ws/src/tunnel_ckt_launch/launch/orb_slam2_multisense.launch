@@ -6,7 +6,7 @@
   <arg name="right_camera_topic" default="/multisense/right/image_rect_mono"/>
   <arg name="depth_topic" default="/multisense/depth"/>
   <arg name="rgbd_mode" default="true"/> 
-  <node name="orb_slam2_stereo" pkg="orb_slam2_ros"
+  <node name="orb_slam2_rgbd" pkg="orb_slam2_ros"
       type="orb_slam2_ros_rgbd" output="screen">
 
        <remap from="image_left/image_color_rect" to="$(arg left_camera_topic)" />
