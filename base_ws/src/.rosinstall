@@ -5,7 +5,7 @@
     local-name: apriltag_ros
     uri: https://github.com/AprilRobotics/apriltag_ros.git
 - git:
-    local-name: cartographer
+    local-name: cartographer_ws
     uri: https://github.com/googlecartographer/cartographer.git
 - git:
     local-name: cartographer_ros
