@@ -1,5 +1,4 @@
 include "map_builder.lua"
-
 include "trajectory_builder.lua"
 
 MAP_BUILDER.use_trajectory_builder_3d = true

@@ -9,6 +9,7 @@
   <arg name="base_frame" default="base"/>
   <arg name="odom_config_1" default="true"/>
   <arg name="odom_config_2" default="false"/>
+  <arg name="interval" default="0.1"/>
 
   <node name="cartographer_node" pkg="cartographer_ros"
       type="cartographer_node" args="
@@ -19,18 +20,12 @@
       <remap from="imu" to="imu_reframed/data"/>
       <remap from="odom" to="$(arg odom_topic)"/>
     </node>
-    <!--<node pkg="imu_reframer" type="odom_repeat_filter_node" name="odom_repeat_filter">
+    <node pkg="imu_reframer" type="tf_topic_vel_to_odom_node" name="tf_vel_to_odom" output="screen">
+      <param name="interval" value="$(arg interval)"/>
       <param name="odom_frame" value="$(arg odom_frame)"/>
       <param name="base_frame" value="$(arg base_frame)"/>
       <remap from="odom_vel" to="raw_odom"/>
-    </node>-->
-    <!--<node pkg="tf_to_topic" type="tf_to_topic" name="tf_to_topic" output="screen">                            
-      <param name="child_frame" value="$(arg base_frame)"/>                                                           
-      <param name="parent_frame" value="$(arg odom_frame)"/>                                                                
-      <param name="tf_topic" value="odom_filtered"/>                                                            
-      <param name="rate" type="double" value="20"/>                                                                                                                          
-    </node>-->
-    
+    </node>
     <node pkg="imu_reframer" type="imu_reframer_node" name="imu_reframer">
       <param name="new_frame" value="$(arg name)/imu2"/>
     </node>

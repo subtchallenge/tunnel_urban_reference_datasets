@@ -11,6 +11,8 @@
   <arg name="multisense" default="false"/>
   <arg name="stix_mode" default="false"/>
   <arg name="start" default="0"/>
+  <arg name="rviz" default="true"/>
+  <arg name="interval" default="0.1"/>
 
   <arg name="rate" default="1.0"/>
   <arg name="mark_artifacts" default="false"/>
@@ -98,14 +100,16 @@
     </group>
 
   </group>
-  <node if="$(arg omnimapper)" pkg="rviz" type="rviz" name="rviz_omnimapper" args="-d $(find urban_ckt_launch)/rviz/omnimapper_$(arg name).rviz"/>
-  <node if="$(arg cartographer)" pkg="rviz" type="rviz" name="rviz_cartographer" args="-d $(find urban_ckt_launch)/rviz/cartographer_$(arg name).rviz"/>
-  <node if="$(arg gmapping)" pkg="rviz" type="rviz" name="rviz_gmapping" args="-d $(find urban_ckt_launch)/rviz/gmapping_$(arg name).rviz"/>
-  <node if="$(arg odom_only)" pkg="rviz" type="rviz" name="rviz_odom_only" args="-d $(find urban_ckt_launch)/rviz/odom_$(arg name).rviz"/>
-  <node if="$(arg msckf)" pkg="rviz" type="rviz" name="rviz_msckf" args="-d $(find urban_ckt_launch)/rviz/msckf_$(arg name).rviz"/>
-  <node if="$(arg vins)" pkg="rviz" type="rviz" name="rviz_vins" args="-d $(find urban_ckt_launch)/rviz/vins_$(arg name).rviz"/>
-  <node if="$(arg orbslam)" pkg="rviz" type="rviz" name="rviz_orbslam" args="-d $(find urban_ckt_launch)/rviz/orbslam_$(arg name).rviz"/>
-  <node if="$(arg kimera)" pkg="rviz" type="rviz" name="rviz_kimera" args="-d $(find urban_ckt_launch)/rviz/kimera_$(arg name).rviz"/>
+  <group if="$(arg rviz)">
+    <node if="$(arg omnimapper)" pkg="rviz" type="rviz" name="rviz_omnimapper" args="-d $(find urban_ckt_launch)/rviz/omnimapper_$(arg name).rviz"/>
+    <node if="$(arg cartographer)" pkg="rviz" type="rviz" name="rviz_cartographer" args="-d $(find urban_ckt_launch)/rviz/cartographer_$(arg name).rviz"/>
+    <node if="$(arg gmapping)" pkg="rviz" type="rviz" name="rviz_gmapping" args="-d $(find urban_ckt_launch)/rviz/gmapping_$(arg name).rviz"/>
+    <node if="$(arg odom_only)" pkg="rviz" type="rviz" name="rviz_odom_only" args="-d $(find urban_ckt_launch)/rviz/odom_$(arg name).rviz"/>
+    <node if="$(arg msckf)" pkg="rviz" type="rviz" name="rviz_msckf" args="-d $(find urban_ckt_launch)/rviz/msckf_$(arg name).rviz"/>
+    <node if="$(arg vins)" pkg="rviz" type="rviz" name="rviz_vins" args="-d $(find urban_ckt_launch)/rviz/vins_$(arg name).rviz"/>
+    <node if="$(arg orbslam)" pkg="rviz" type="rviz" name="rviz_orbslam" args="-d $(find urban_ckt_launch)/rviz/orbslam_$(arg name).rviz"/>
+    <node if="$(arg kimera)" pkg="rviz" type="rviz" name="rviz_kimera" args="-d $(find urban_ckt_launch)/rviz/kimera_$(arg name).rviz"/>
+  </group>
   <node pkg="static_transform_mux" type="static_transform_mux" name="static_transform_mux"/>
   <node pkg="subt_artifact_report" type="subt_scoring_node" name="scoring_node" output="screen">
     <param name="image" value="/$(arg name)/multisense/left/image_rect_color"/>
@@ -171,7 +175,7 @@
       </include>
     </group>
     <group if="$(arg cartographer)">
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).cartographer.rmse"/>
+      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).cartographer_$(arg odom_mode).rmse"/>
       <include file="$(find urban_ckt_launch)/launch/cartographer.launch">
         <arg name="name" value="$(arg name)"/>
         <arg unless="$(arg multisense)" name="lidar_topic" value="lidar_points"/>
@@ -182,6 +186,7 @@
         <arg name="base_frame" value="$(arg name)/base"/>
         <arg name="odom_config_1" value="$(arg odom_config_1)"/>
         <arg name="odom_config_2" value="$(arg odom_config_2)"/>
+        <arg name="interval" value="$(arg interval)"/>
       </include>
     </group>
     <group if="$(arg gmapping)">
