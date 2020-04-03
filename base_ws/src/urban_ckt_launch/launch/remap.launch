@@ -126,14 +126,14 @@
   <node pkg="subt_artifact_report" type="frame_alignment_node" name="frame_alignment_node" output="screen">
     <param name="gt_filename" value="$(env PWD)/GT/gt_$(arg course)_$(arg config).csv"/>
     <rosparam param="fiducials">
-      - fiducial_24: {x: 0.627, y: 1.454, z: 0.607}
-      - fiducial_25: {x: 0.622, y: 0.253, z: 2.537}
-      - fiducial_26: {x: 0.621, y: -1.431, z: 1.114}
-      - fiducial_27: {x: 29.580, y: 0.927, z: 1.163}
-      - fiducial_4: {x: 0.582, y: 1.685, z: 0.501}
-      - fiducial_5: {x: 0.575, y: 0.264, z: 2.556}
-      - fiducial_6: {x: 0.583, y: -1.674, z: 0.985}
-      - fiducial_7: {x: 29.728, y: 1.124, z: 1.093}
+      - fiducial_24: {x: 0.501, y: 1.326, z: 0.596}
+      - fiducial_25: {x: 0.4675, y: 0.2515, z: 2.686}
+      - fiducial_26: {x: 0.4835, y: -1.34, z: 1.092}
+      - fiducial_27: {x: 15.8315, y: 0.8065, z: 0.991}
+      - fiducial_4: {x: 0.4865, y: 1.3275, z: 0.5955}
+      - fiducial_5: {x: 0.4895, y: 0.251, z: 2.74}
+      - fiducial_6: {x: 0.505, y: -1.3155, z: 1.0965}
+      - fiducial_7: {x: 4.042, y: 20.837, z: 0.9975}
     </rosparam>
     <remap from="camera_info" to="$(arg name)/multisense/left/camera_info"/>
     <remap from="image/compressed" to="$(arg name)/multisense/left/image_rect_color/compressed"/>
