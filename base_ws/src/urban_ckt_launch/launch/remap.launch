@@ -5,9 +5,12 @@
   <arg name="reproject" default="false"/>
   <arg name="reodom" default="false"/>
   <arg name="noodom" default="false"/> <!-- A setting for cartographer since it can make odom transform -->
+  <arg name="odom_mode" default="odom"/>
   <arg name="odom_config_1" default="false"/> <!-- Used with cartographer on a_lvl_1.bag -->
   <arg name="odom_config_2" default="false"/> <!-- Used with cartographer on a_lvl_2, b_lvl_1, b_lvl_2 bag files -->
+  <arg name="multisense" default="false"/>
   <arg name="stix_mode" default="false"/>
+  <arg name="start" default="0"/>
 
   <arg name="rate" default="1.0"/>
   <arg name="mark_artifacts" default="false"/>
@@ -41,7 +44,7 @@
     </rosparam>
   </node>
   <group if="$(arg reproject)">
-    <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate $(arg rate) --clock --topics /$(arg name)/boson_forward/camera_info  /$(arg name)/boson_forward/image_raw/compressed /$(arg name)/boson_up/camera_info /$(arg name)/boson_up/image_raw/compressed /$(arg name)/cmd_vel /$(arg name)/husky_velocity_controller/odom /$(arg name)/imu/data /$(arg name)/joy /$(arg name)/mac80211/scan /$(arg name)/multisense/calibration/device_info /$(arg name)/multisense/calibration/raw_cam_cal /$(arg name)/multisense/calibration/raw_cam_config /$(arg name)/multisense/calibration/raw_lidar_cal /$(arg name)/multisense/depth/camera_info /$(arg name)/multisense/depth /$(arg name)/multisense/depth/compressedDepth /$(arg name)/multisense/imu/accelerometer /$(arg name)/multisense/imu/accelerometer_vector /$(arg name)/multisense/imu/gyroscope /$(arg name)/multisense/imu/gyroscope_vector /$(arg name)/multisense/imu/imu_data /$(arg name)/multisense/imu/magnetometer /$(arg name)/multisense/imu/magnetometer_vector /$(arg name)/multisense/left/camera_info /$(arg name)/multisense/left/image_rect_color/camera_info /$(arg name)/multisense/left/image_rect_color/compressed /$(arg name)/multisense/lidar_points2 /$(arg name)/multisense/pps /$(arg name)/multisense/right/camera_info /$(arg name)/multisense/right/image_rect/camera_info /$(arg name)/multisense/right/image_rect/compressed /$(arg name)/multisense/stamped_pps /$(arg name)/multisense/status /$(arg name)/odom /$(arg name)/ouster_driver/imu_packets /$(arg name)/ouster_driver/lidar_packets /sherman/scd30 /gvrbot_power_data /sherman/raw_odom /$(arg name)/os1_node/lidar_packets /$(arg name)/os1_node/imu_packets /diagnostics_agg /tf /tf_static tf:=tf_remap" launch-prefix="xterm -e"/>
+    <node pkg="rosbag" type="play" name="bagplay" required="true" args="$(env PWD)/$(arg bag) --start $(arg start) --rate $(arg rate) --clock --topics /$(arg name)/boson_forward/camera_info  /$(arg name)/boson_forward/image_raw/compressed /$(arg name)/boson_up/camera_info /$(arg name)/boson_up/image_raw/compressed /$(arg name)/cmd_vel /$(arg name)/husky_velocity_controller/odom /$(arg name)/imu/data /$(arg name)/joy /$(arg name)/mac80211/scan /$(arg name)/multisense/calibration/device_info /$(arg name)/multisense/calibration/raw_cam_cal /$(arg name)/multisense/calibration/raw_cam_config /$(arg name)/multisense/calibration/raw_lidar_cal /$(arg name)/multisense/depth/camera_info /$(arg name)/multisense/depth /$(arg name)/multisense/depth/compressedDepth /$(arg name)/multisense/imu/accelerometer /$(arg name)/multisense/imu/accelerometer_vector /$(arg name)/multisense/imu/gyroscope /$(arg name)/multisense/imu/gyroscope_vector /$(arg name)/multisense/imu/imu_data /$(arg name)/multisense/imu/magnetometer /$(arg name)/multisense/imu/magnetometer_vector /$(arg name)/multisense/left/camera_info /$(arg name)/multisense/left/image_rect_color/camera_info /$(arg name)/multisense/left/image_rect_color/compressed /$(arg name)/multisense/lidar_points2 /$(arg name)/multisense/pps /$(arg name)/multisense/right/camera_info /$(arg name)/multisense/right/image_rect/camera_info /$(arg name)/multisense/right/image_rect/compressed /$(arg name)/multisense/stamped_pps /$(arg name)/multisense/status /$(arg name)/odom /$(arg name)/ouster_driver/imu_packets /$(arg name)/ouster_driver/lidar_packets /sherman/scd30 /gvrbot_power_data /sherman/raw_odom /$(arg name)/os1_node/lidar_packets /$(arg name)/os1_node/imu_packets /diagnostics_agg /tf /tf_static tf:=tf_remap" launch-prefix="xterm -e"/>
     <node pkg="topic_tools" type="relay" name="os_packet_relay" args="/$(arg name)/os1_node/lidar_packets /$(arg name)/ouster_driver/lidar_packets /sherman/scd30 /gvrbot_power_data /sherman/raw_odom"/>
     <group ns="$(arg name)">
       <node pkg="nodelet" type="nodelet" name="assemble_nodelet"
@@ -59,7 +62,7 @@
     </group>
   </group>
   <group unless="$(arg reproject)">
-    <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate $(arg rate) --clock --topics /$(arg name)/boson_forward/camera_info  /$(arg name)/boson_forward/image_raw/compressed /$(arg name)/boson_up/camera_info /$(arg name)/boson_up/image_raw/compressed /$(arg name)/cmd_vel /$(arg name)/husky_velocity_controller/odom /$(arg name)/imu/data /$(arg name)/joy /$(arg name)/mac80211/scan /$(arg name)/multisense/calibration/device_info /$(arg name)/multisense/calibration/raw_cam_cal /$(arg name)/multisense/calibration/raw_cam_config /$(arg name)/multisense/calibration/raw_lidar_cal /$(arg name)/multisense/depth/camera_info /$(arg name)/multisense/depth /$(arg name)/multisense/depth/compressedDepth /$(arg name)/multisense/imu/accelerometer /$(arg name)/multisense/imu/accelerometer_vector /$(arg name)/multisense/imu/gyroscope /$(arg name)/multisense/imu/gyroscope_vector /$(arg name)/multisense/imu/imu_data /$(arg name)/multisense/imu/magnetometer /$(arg name)/multisense/imu/magnetometer_vector /$(arg name)/multisense/left/camera_info /$(arg name)/multisense/left/image_rect_color/camera_info /$(arg name)/multisense/left/image_rect_color/compressed /$(arg name)/multisense/lidar_points2 /$(arg name)/multisense/pps /$(arg name)/multisense/right/camera_info /$(arg name)/multisense/right/image_rect/camera_info /$(arg name)/multisense/right/image_rect/compressed /$(arg name)/multisense/stamped_pps /$(arg name)/multisense/status /$(arg name)/assembled_cloud /$(arg name)/lidar_points /$(arg name)/odom /$(arg name)/ouster_driver/imu_packets /$(arg name)/ouster_driver/lidar_packets /sherman/scd30 /gvrbot_power_data /sherman/raw_odom  /diagnostics_agg /tf /tf_static tf:=tf_remap /$(arg name)/assembled_cloud:=/$(arg name)/old_assembled_cloud" launch-prefix="xterm -e"/>
+    <node pkg="rosbag" type="play" name="bagplay" required="true" args="$(env PWD)/$(arg bag) --rate $(arg rate) --clock --topics /$(arg name)/boson_forward/camera_info  /$(arg name)/boson_forward/image_raw/compressed /$(arg name)/boson_up/camera_info /$(arg name)/boson_up/image_raw/compressed /$(arg name)/cmd_vel /$(arg name)/husky_velocity_controller/odom /$(arg name)/imu/data /$(arg name)/joy /$(arg name)/mac80211/scan /$(arg name)/multisense/calibration/device_info /$(arg name)/multisense/calibration/raw_cam_cal /$(arg name)/multisense/calibration/raw_cam_config /$(arg name)/multisense/calibration/raw_lidar_cal /$(arg name)/multisense/depth/camera_info /$(arg name)/multisense/depth /$(arg name)/multisense/depth/compressedDepth /$(arg name)/multisense/imu/accelerometer /$(arg name)/multisense/imu/accelerometer_vector /$(arg name)/multisense/imu/gyroscope /$(arg name)/multisense/imu/gyroscope_vector /$(arg name)/multisense/imu/imu_data /$(arg name)/multisense/imu/magnetometer /$(arg name)/multisense/imu/magnetometer_vector /$(arg name)/multisense/left/camera_info /$(arg name)/multisense/left/image_rect_color/camera_info /$(arg name)/multisense/left/image_rect_color/compressed /$(arg name)/multisense/lidar_points2 /$(arg name)/multisense/pps /$(arg name)/multisense/right/camera_info /$(arg name)/multisense/right/image_rect/camera_info /$(arg name)/multisense/right/image_rect/compressed /$(arg name)/multisense/stamped_pps /$(arg name)/multisense/status /$(arg name)/assembled_cloud /$(arg name)/lidar_points /$(arg name)/odom /$(arg name)/ouster_driver/imu_packets /$(arg name)/ouster_driver/lidar_packets /sherman/scd30 /gvrbot_power_data /sherman/raw_odom  /diagnostics_agg /tf /tf_static tf:=tf_remap /$(arg name)/assembled_cloud:=/$(arg name)/old_assembled_cloud" launch-prefix="xterm -e"/>
     <group if="$(arg stix_mode)" ns="$(arg name)">
       <param name="tf_prefix" value="$(arg name)" />
 
@@ -120,6 +123,33 @@
     <param name="depth_transport" value="raw"/>
     <param name="assume_flat_initialization" value="$(arg initialize_flat)"/>
   </node>
+  <node pkg="subt_artifact_report" type="frame_alignment_node" name="frame_alignment_node" output="screen">
+    <param name="gt_filename" value="$(env PWD)/GT/gt_$(arg course)_$(arg config).csv"/>
+    <rosparam param="fiducials">
+      - fiducial_24: {x: 0.627, y: 1.454, z: 0.607}
+      - fiducial_25: {x: 0.622, y: 0.253, z: 2.537}
+      - fiducial_26: {x: 0.621, y: -1.431, z: 1.114}
+      - fiducial_27: {x: 29.580, y: 0.927, z: 1.163}
+      - fiducial_4: {x: 0.582, y: 1.685, z: 0.501}
+      - fiducial_5: {x: 0.575, y: 0.264, z: 2.556}
+      - fiducial_6: {x: 0.583, y: -1.674, z: 0.985}
+      - fiducial_7: {x: 29.728, y: 1.124, z: 1.093}
+    </rosparam>
+    <remap from="camera_info" to="$(arg name)/multisense/left/camera_info"/>
+    <remap from="image/compressed" to="$(arg name)/multisense/left/image_rect_color/compressed"/>
+    <remap from="depth_image" to="$(arg name)/multisense/depth"/>
+    <param name="report_frame" value="$(arg name)/base"/>
+    <param name="map_frame" value="$(arg name)/map"/>
+    <param name="odom_frame" value="$(arg name)/odom"/>
+  </node>
+  <group if="$(arg mark_artifacts)">
+    <node pkg="image_transport" type="republish" name="republish_left_image" output="screen" args="_image_transport:=compressed in:=/$(arg name)/multisense/left/image_rect_color raw out:=/$(arg name)/multisense/left/image_rect_color_raw" />
+    <node pkg="image_proc" type="image_proc" name="left_image_proc">
+      <remap from="image_raw" to="/$(arg name)/multisense/left/image_rect_color_raw" />
+      <remap from="camera_info" to="/$(arg name)/multisense/left/image_rect_color_raw/camera_info" />
+      <remap from="/$(arg name)/image_mono" to="/$(arg name)/multisense/left/image_rect_mono" />
+    </node>
+  </group>
   <node pkg="imu_reframer" type="distance_traveled_node" name="distance_traveled_node" output="screen">
     <param name="from_frame" value="darpa"/>
     <param name="to_frame" value="$(arg name)/base"/>
@@ -144,9 +174,12 @@
       <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).cartographer.rmse"/>
       <include file="$(find urban_ckt_launch)/launch/cartographer.launch">
         <arg name="name" value="$(arg name)"/>
-        <arg name="lidar_topic" value="lidar_points"/>
-        <arg name="odom_topic" value="raw_odom"/>
-        <arg name="odom_frame" value="$(arg name)/base"/>
+        <arg unless="$(arg multisense)" name="lidar_topic" value="lidar_points"/>
+        <arg if="$(arg multisense)" name="lidar_topic" value="multisense/lidar_points2"/>
+        <arg name="odom_mode" value="$(arg odom_mode)"/>
+        <arg name="odom_topic" value="odom_filtered"/>
+        <arg name="odom_frame" value="$(arg name)/odom"/>
+        <arg name="base_frame" value="$(arg name)/base"/>
         <arg name="odom_config_1" value="$(arg odom_config_1)"/>
         <arg name="odom_config_2" value="$(arg odom_config_2)"/>
       </include>
