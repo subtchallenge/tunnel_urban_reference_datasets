@@ -27,11 +27,9 @@ std::map<string, tf::Point> fiducial_point_darpa_frame;
 tf::TransformListener *tfL;
 tf2_ros::StaticTransformBroadcaster *tfB;
 std::string map_frame;
-bool assume_flat_initialization = false;
 
 std::vector<tf::Point> fiducials_observed;
-std::vector<std::tuple<std::string, tf::Point, int, std::string>>
-    good_artifacts;
+std::vector<std::tuple<std::string, tf::Point, int, std::string>> good_artifacts;
 std::vector<std::tuple<std::string, tf::Point, int, std::string>> bad_artifacts;
 
 ros::Publisher *marker_pub;
@@ -112,7 +110,7 @@ void PublishMarkers() {
     line_marker.pose.position.z = 0;
     line_marker.points.push_back(marker.pose.position);
     geometry_msgs::Point distal_pt;
-    distal_pt.x = gt_artifacts[std::get<2>(good_artifacts[i])].second.x();
+    distal_pt.x = gt_artifacts[std::get<2>(good_artifacts[i])].second.x(); 
     distal_pt.y = gt_artifacts[std::get<2>(good_artifacts[i])].second.y();
     distal_pt.z = gt_artifacts[std::get<2>(good_artifacts[i])].second.z();
     line_marker.points.push_back(distal_pt);
@@ -125,10 +123,9 @@ void PublishMarkers() {
     marker.id++;
     text_marker.action = visualization_msgs::Marker::ADD;
     text_marker.text = std::get<3>(good_artifacts[i]);
-    text_marker.pose.position.x = (distal_pt.x + marker.pose.position.x) / 2.0;
-    text_marker.pose.position.y = (distal_pt.y + marker.pose.position.y) / 2.0;
-    text_marker.pose.position.z =
-        (distal_pt.z + marker.pose.position.z) / 2.0 - 0.5; // below
+    text_marker.pose.position.x = (distal_pt.x + marker.pose.position.x)/2.0;
+    text_marker.pose.position.y = (distal_pt.y + marker.pose.position.y)/2.0;
+    text_marker.pose.position.z = (distal_pt.z + marker.pose.position.z)/2.0 - 0.5; //below
     text_marker.id = marker.id++;
     send_markers.markers.push_back(text_marker);
     text_marker.action = visualization_msgs::Marker::DELETE;
@@ -161,7 +158,7 @@ void PublishMarkers() {
     line_marker.pose.position.z = 0;
     line_marker.points.push_back(marker.pose.position);
     geometry_msgs::Point distal_pt;
-    distal_pt.x = gt_artifacts[std::get<2>(bad_artifacts[i])].second.x();
+    distal_pt.x = gt_artifacts[std::get<2>(bad_artifacts[i])].second.x(); 
     distal_pt.y = gt_artifacts[std::get<2>(bad_artifacts[i])].second.y();
     distal_pt.z = gt_artifacts[std::get<2>(bad_artifacts[i])].second.z();
     line_marker.points.push_back(distal_pt);
@@ -173,10 +170,9 @@ void PublishMarkers() {
     marker.id++;
     text_marker.action = visualization_msgs::Marker::ADD;
     text_marker.text = std::get<3>(bad_artifacts[i]);
-    text_marker.pose.position.x = (distal_pt.x + marker.pose.position.x) / 2.0;
-    text_marker.pose.position.y = (distal_pt.y + marker.pose.position.y) / 2.0;
-    text_marker.pose.position.z =
-        (distal_pt.z + marker.pose.position.z) / 2.0 - 0.5; // below
+    text_marker.pose.position.x = (distal_pt.x + marker.pose.position.x)/2.0;
+    text_marker.pose.position.y = (distal_pt.y + marker.pose.position.y)/2.0;
+    text_marker.pose.position.z = (distal_pt.z + marker.pose.position.z)/2.0 - 0.5; //below
     text_marker.id = marker.id++;
     send_markers.markers.push_back(text_marker);
     text_marker.action = visualization_msgs::Marker::DELETE;
@@ -280,12 +276,6 @@ double getRMSE(const std::set<double> &residuals) {
   MSE = MSE / static_cast<double>(residuals.size());
   return sqrt(MSE);
 }
-geometry_msgs::TransformStamped flattenTransform(const geometry_msgs::TransformStamped& darpa_frame_transform) {
-  geometry_msgs::TransformStamped out = darpa_frame_transform;
-  out.transform.rotation = tf::createQuaternionMsgFromYaw(tf::getYaw(out.transform.rotation));
-
-  return out;
-}
 
 double HandleReport(
     const std::tuple<double, std::string, tf::Stamped<tf::Point>> &report,
@@ -373,20 +363,16 @@ double HandleReport(
       geometry_msgs::TransformStamped darpa_frame_transform;
       if (reverse_transform) {
         darpa_frame_transform.header.frame_id = map_frame;
-        darpa_frame_transform.child_frame_id = "darpa";
-        EigenToTransformMsg(output_transform.inverse(),
-                            darpa_frame_transform.transform);
+        darpa_frame_transform.child_frame_id = "darpa"; 
+        EigenToTransformMsg(output_transform.inverse(), darpa_frame_transform.transform);
       } else {
         darpa_frame_transform.header.frame_id = "darpa";
         darpa_frame_transform.child_frame_id = map_frame;
         EigenToTransformMsg(output_transform, darpa_frame_transform.transform);
       }
       darpa_frame_transform.header.stamp = ros::Time::now();
-      // Optionally zero out pitch type darpa->map, as this is likely to be near zero and is susceptible
-      // to error amplified by ranging error to the targets
-      // In the case of the alpha dataset, distal fiducial is not helpful in correcting this error
-      if (assume_flat_initialization) 
-        darpa_frame_transform = flattenTransform(darpa_frame_transform);
+      //      CvMatToTransformMsg(cvoutput_transform,
+      //      darpa_frame_transform.transform);
       tfB->sendTransform(darpa_frame_transform);
       // cv::estimateAffine3D(src, dest, affine_transform, inliers);
       // printMat(output_transform);
@@ -441,8 +427,8 @@ double HandleReport(
     double best_distxy = std::numeric_limits<double>::infinity();
     int ind = 0;
     int best_ind = -1;
-    for (std::vector<std::pair<std::string, tf::Point>>::const_iterator
-             itr = gt_artifacts.begin();
+    for (std::vector<std::pair<std::string, tf::Point>>::const_iterator itr =
+             gt_artifacts.begin();
          itr != gt_artifacts.end(); itr++, ind++) {
 
       if (itr->first == std::get<1>(report)) {
@@ -466,17 +452,17 @@ double HandleReport(
       }
     }
     if (closest_itr != gt_artifacts.end()) {
-      std::stringstream ss;
-      ss << std::setprecision(2) << best_dist << "m";
       if (best_dist <= 5.0) {
         std::cout << " A point scored with residual error of " << best_dist
                   << std::endl;
         points++;
-        good_artifacts.push_back(
-            std::make_tuple(std::get<1>(report), pt_darpa, best_ind, ss.str()));
+        std::stringstream ss;
+        ss << best_dist << "m";
+        good_artifacts.push_back(std::make_tuple(std::get<1>(report), pt_darpa, best_ind, ss.str()));
       } else {
-        bad_artifacts.push_back(
-            std::make_tuple(std::get<1>(report), pt_darpa, best_ind, ss.str()));
+        std::stringstream ss;
+        ss << best_dist << "m";
+        bad_artifacts.push_back(std::make_tuple(std::get<1>(report), pt_darpa, best_ind, ss.str()));
       }
       if (best_distxy <= 5.0) {
         std::cout << "A point scored if we limit to xy plane with residual "
@@ -652,7 +638,6 @@ int main(int argc, char *argv[]) {
   private_nh.param("rmse_filename", rmse_filename,
                    std::string("/var/tmp/rmse"));
   private_nh.param("coding_mode", coding_mode, false);
-  private_nh.param("assume_flat_initialization", assume_flat_initialization, false);
 
   // Hideous, lazy
   tf::TransformListener tfL_;
@@ -660,14 +645,13 @@ int main(int argc, char *argv[]) {
   tf2_ros::StaticTransformBroadcaster tfB_;
   tfB = &tfB_;
   ros::Publisher marker_pub_ =
-      nh.advertise<visualization_msgs::MarkerArray>("SubT_markers", 1, true);
+      nh.advertise<visualization_msgs::MarkerArray>("SubT_markers", 1);
   marker_pub = &marker_pub_;
 
   std::ifstream infile(gt_filename.c_str(), std::ios::in);
   if (!infile.is_open()) {
     ROS_ERROR_STREAM("Cannot judge mapping run without ground truth state. "
-                     "Please provide a gt_filename. What I have is: "
-                     << gt_filename);
+                     "Please provide a gt_filename. What I have is: " << gt_filename);
     exit(1);
   }
   std::string line;
@@ -677,15 +661,11 @@ int main(int argc, char *argv[]) {
     double x, y, z;
     ss >> label >> x >> y >> z;
     gt_artifacts.push_back(std::make_pair(label, tf::Point(x, y, z)));
-    std::cout << "Parsed ground truth artifact " << label
-      << " at : (" << x << ", " << y << ", " << z << ")" << std::endl;
   }
   infile.close();
   infile.open(fiducial_file.c_str(), std::ios::in);
   if (!infile.is_open()) {
-    ROS_ERROR_STREAM("Unable to open fiducial ground truth locations. Please "
-                     "provide a fiducial_file. What I have is "
-                     << fiducial_file);
+    ROS_ERROR_STREAM("Unable to open fiducial ground truth locations. Please provide a fiducial_file. What I have is " << fiducial_file);
   }
   while (std::getline(infile, line)) {
     std::stringstream ss(line);
@@ -706,8 +686,6 @@ int main(int argc, char *argv[]) {
     private_nh.param("image", image_name, std::string("image"));
     private_nh.param("depth_image", depth_image_name,
                      std::string("depth_image"));
-    std::string depth_transport;
-    private_nh.param("depth_transport", depth_transport, std::string("compressedDepth"));
 
     cv::setMouseCallback("image", onMouse, &md);
     ros::Subscriber info_sub = nh.subscribe<sensor_msgs::CameraInfo>(
@@ -717,7 +695,7 @@ int main(int argc, char *argv[]) {
         it, image_name, 50, image_transport::TransportHints("compressed"));
     image_transport::SubscriberFilter depth_img_sub(
         it, depth_image_name, 50,
-        image_transport::TransportHints(depth_transport));
+        image_transport::TransportHints("compressedDepth"));
     typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,
                                                             sensor_msgs::Image>
         MySyncPolicy;
@@ -726,7 +704,7 @@ int main(int argc, char *argv[]) {
     sync.registerCallback(boost::bind(&onImagesScoring, &md, _1, _2));
 
     while (ros::ok()) {
-      cv::waitKey(30);
+      cv::waitKey(5);
       ros::spinOnce();
     }
     cv::destroyAllWindows();
@@ -761,8 +739,7 @@ int main(int argc, char *argv[]) {
     }
     infile.close();
     reports.sort(sorttuple);
-    ROS_INFO_STREAM("Processing " << reports.size()
-                                  << " artifact marking reports + fiducials");
+    ROS_INFO_STREAM("Processing " << reports.size() << " artifact marking reports + fiducials");
 
     ros::Rate r(10);
     while (reports.size() != 0 && ros::ok()) {

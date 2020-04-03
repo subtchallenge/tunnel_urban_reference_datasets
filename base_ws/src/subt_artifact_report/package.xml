@@ -2,12 +2,12 @@
 <package format="2">
   <name>subt_artifact_report</name>
   <version>0.0.0</version>
-  <description>The subt_artifact_report package</description>
+  <description>The subt_artifact_report package. Used here for generating frame alignment to global frame through multiple april tags, and visualizing the location of ground truth artifacts</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="jgrogers@todo.todo">jgrogers</maintainer>
+  <maintainer email="john.g.rogers59.civ@mail.mil">John Rogers</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->

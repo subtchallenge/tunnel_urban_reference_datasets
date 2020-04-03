@@ -27,10 +27,9 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(OpenCV REQUIRED)
 find_package(Eigen REQUIRED)
 find_package(PkgConfig)
-pkg_search_module(apriltag REQUIRED apriltag)
-set(apriltag_INCLUDE_DIRS "${apriltag_INCLUDE_DIRS}/apriltag")
-link_directories(${apriltag_LIBDIR})
-
+pkg_search_module(apriltag REQUIRED apriltag)                                                                                                                                                             
+set(apriltag_INCLUDE_DIRS "${apriltag_INCLUDE_DIRS}/apriltag")                                                
+link_directories(${apriltag_LIBDIR})       
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -157,6 +156,8 @@ add_executable(subt_coding_node src/subt_coding_node.cpp)
 target_link_libraries(subt_coding_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES} coding)
 add_executable(subt_scoring_node src/subt_scoring_node.cpp)
 target_link_libraries(subt_scoring_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES} coding)
+add_executable(frame_alignment_node src/frame_alignment_node.cpp)
+target_link_libraries(frame_alignment_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
 ### Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -188,7 +189,7 @@ target_link_libraries(subt_scoring_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} 
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-install(TARGETS subt_coding_node subt_scoring_node
+install(TARGETS subt_coding_node subt_scoring_node frame_alignment_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
