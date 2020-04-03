@@ -47,7 +47,7 @@ CodingManager::CodingManager(ros::NodeHandle& nh, ros::NodeHandle& private_nh) :
       file.close();      
     }
   }
-  outfile.open(outfilename.c_str(), std::ios::out);
+  outfile.open(outfilename.c_str(), std::ios::out | std::ios::app);
 
 }
 CodingManager::~CodingManager() {

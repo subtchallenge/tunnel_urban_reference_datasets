@@ -5,8 +5,8 @@
   <arg name="reproject" default="false"/>
   <arg name="reodom" default="false"/>
   <arg name="noodom" default="false"/> <!-- A setting for cartographer since it can make odom transform -->
-  <arg name="odom_config_1" default="false"/>
-  <arg name="odom_config_2" default="false"/>
+  <arg name="odom_config_1" default="false"/> <!-- Used with cartographer on a_lvl_1.bag -->
+  <arg name="odom_config_2" default="false"/> <!-- Used with cartographer on a_lvl_2, b_lvl_1, b_lvl_2 bag files -->
   <arg name="stix_mode" default="false"/>
 
   <arg name="rate" default="1.0"/>
@@ -14,6 +14,7 @@
   <arg name="bag_out" default="false"/>
   <arg name="course" default="ex"/>
   <arg name="config" default="A"/>
+  <arg name="initialize_flat" default="false"/>
 
     <!-- Mapping mode settings -->
   <arg name="omnimapper" default="false"/>
@@ -58,7 +59,7 @@
     </group>
   </group>
   <group unless="$(arg reproject)">
-    <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate $(arg rate) --clock --topics /$(arg name)/boson_forward/camera_info  /$(arg name)/boson_forward/image_raw/compressed /$(arg name)/boson_up/camera_info /$(arg name)/boson_up/image_raw/compressed /$(arg name)/cmd_vel /$(arg name)/husky_velocity_controller/odom /$(arg name)/imu/data /$(arg name)/joy /$(arg name)/mac80211/scan /$(arg name)/multisense/calibration/device_info /$(arg name)/multisense/calibration/raw_cam_cal /$(arg name)/multisense/calibration/raw_cam_config /$(arg name)/multisense/calibration/raw_lidar_cal /$(arg name)/multisense/depth/camera_info /$(arg name)/multisense/depth /$(arg name)/multisense/depth/compressedDepth /$(arg name)/multisense/imu/accelerometer /$(arg name)/multisense/imu/accelerometer_vector /$(arg name)/multisense/imu/gyroscope /$(arg name)/multisense/imu/gyroscope_vector /$(arg name)/multisense/imu/imu_data /$(arg name)/multisense/imu/magnetometer /$(arg name)/multisense/imu/magnetometer_vector /$(arg name)/multisense/left/camera_info /$(arg name)/multisense/left/image_rect_color/camera_info /$(arg name)/multisense/left/image_rect_color/compressed /$(arg name)/multisense/lidar_points2 /$(arg name)/multisense/pps /$(arg name)/multisense/right/camera_info /$(arg name)/multisense/right/image_rect/camera_info /$(arg name)/multisense/right/image_rect/compressed /$(arg name)/multisense/stamped_pps /$(arg name)/multisense/status /$(arg name)/assembled_cloud /$(arg name)/lidar_points /$(arg name)/odom /$(arg name)/ouster_driver/imu_packets /$(arg name)/ouster_driver/lidar_packets /sherman/scd30 /gvrbot_power_data /sherman/raw_odom  /diagnostics_agg /tf /tf_static tf:=tf_remap" launch-prefix="xterm -e"/>
+    <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate $(arg rate) --clock --topics /$(arg name)/boson_forward/camera_info  /$(arg name)/boson_forward/image_raw/compressed /$(arg name)/boson_up/camera_info /$(arg name)/boson_up/image_raw/compressed /$(arg name)/cmd_vel /$(arg name)/husky_velocity_controller/odom /$(arg name)/imu/data /$(arg name)/joy /$(arg name)/mac80211/scan /$(arg name)/multisense/calibration/device_info /$(arg name)/multisense/calibration/raw_cam_cal /$(arg name)/multisense/calibration/raw_cam_config /$(arg name)/multisense/calibration/raw_lidar_cal /$(arg name)/multisense/depth/camera_info /$(arg name)/multisense/depth /$(arg name)/multisense/depth/compressedDepth /$(arg name)/multisense/imu/accelerometer /$(arg name)/multisense/imu/accelerometer_vector /$(arg name)/multisense/imu/gyroscope /$(arg name)/multisense/imu/gyroscope_vector /$(arg name)/multisense/imu/imu_data /$(arg name)/multisense/imu/magnetometer /$(arg name)/multisense/imu/magnetometer_vector /$(arg name)/multisense/left/camera_info /$(arg name)/multisense/left/image_rect_color/camera_info /$(arg name)/multisense/left/image_rect_color/compressed /$(arg name)/multisense/lidar_points2 /$(arg name)/multisense/pps /$(arg name)/multisense/right/camera_info /$(arg name)/multisense/right/image_rect/camera_info /$(arg name)/multisense/right/image_rect/compressed /$(arg name)/multisense/stamped_pps /$(arg name)/multisense/status /$(arg name)/assembled_cloud /$(arg name)/lidar_points /$(arg name)/odom /$(arg name)/ouster_driver/imu_packets /$(arg name)/ouster_driver/lidar_packets /sherman/scd30 /gvrbot_power_data /sherman/raw_odom  /diagnostics_agg /tf /tf_static tf:=tf_remap /$(arg name)/assembled_cloud:=/$(arg name)/old_assembled_cloud" launch-prefix="xterm -e"/>
     <group if="$(arg stix_mode)" ns="$(arg name)">
       <param name="tf_prefix" value="$(arg name)" />
 
@@ -91,10 +92,6 @@
         <param name="multireturn" value="false"/>
         <param name="platform" value="$(arg name)"/>
       </node>
-      <node if="$(arg cartographer)" pkg="omnimapper_tools" type="cloud_destamper" name="destamper">
-
-      </node>
-
     </group>
 
   </group>
@@ -121,6 +118,7 @@
     <param name="fiducial_file" value="$(env PWD)/fiducial_$(arg course)"/>
     <param name="coding_mode" value="$(arg mark_artifacts)"/>
     <param name="depth_transport" value="raw"/>
+    <param name="assume_flat_initialization" value="$(arg initialize_flat)"/>
   </node>
   <node pkg="imu_reframer" type="distance_traveled_node" name="distance_traveled_node" output="screen">
     <param name="from_frame" value="darpa"/>
@@ -134,6 +132,9 @@
       output="screen"/>
 
     <group if="$(arg omnimapper)">
+      <node if="$(arg omnimapper)" pkg="omnimapper_tools" type="stamp_point_clouds" name="cloud_stamper">
+        <param name="platform" value="$(arg name)"/>
+      </node>
       <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).omnimapper.rmse"/>
       <include if="$(arg omnimapper)" file="$(find mapping_launch)/launch/omnimapper_3d.launch">
         <arg name="name" value="$(arg name)"/>
@@ -243,6 +244,9 @@
         <arg name="base_link_frame_id" value="$(arg name)/base"/>
       </include>
     </group>  </group>
+    <include file="$(find packbot_visualization)/launch/example.launch">
+      <arg name="name" value="$(arg name)"/>
+    </include>
   <group if="$(arg bag_out)">
     <node pkg="rosbag" type="record" name="record" args="-O $(env PWD)/$(arg bag).out.bag /tf /tf_static /$(arg name)/point_cloud_cache/renderers/full_cloud /$(arg name)/point_cloud_cache/renderers/full_map /SubT_markers"/>
   </group>
