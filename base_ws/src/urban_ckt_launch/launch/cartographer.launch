@@ -3,30 +3,41 @@
   <arg name="name" />
   <arg name="mode" default="3d"/>
   <arg name="lidar_topic" default="ouster/points"/>
+  <arg name="odom_mode" default="odom"/>
   <arg name="odom_topic" default="odom"/>
-  <arg name="odom_frame" default="na"/>
+  <arg name="odom_frame" default="odom"/>
+  <arg name="base_frame" default="base"/>
   <arg name="odom_config_1" default="true"/>
   <arg name="odom_config_2" default="false"/>
 
   <node name="cartographer_node" pkg="cartographer_ros"
       type="cartographer_node" args="
       -configuration_directory $(find urban_ckt_launch)/config/cartographer
-      -configuration_basename cartographer_$(arg mode)_$(arg name).lua"
+      -configuration_basename cartographer_$(arg mode)_$(arg name)_$(arg odom_mode).lua"
       output="screen">
       <remap from="points2" to="$(arg lidar_topic)" />
       <remap from="imu" to="imu_reframed/data"/>
-      <remap from="odom" to="odom_filtered"/>
+      <remap from="odom" to="$(arg odom_topic)"/>
     </node>
-    <node pkg="imu_reframer" type="odom_repeat_filter_node" name="odom_repeat_filter">
-      <param name="new_frame" value="$(arg odom_frame)"/>
-      <remap from="odom" to="raw_odom"/>
-    </node>
+    <!--<node pkg="imu_reframer" type="odom_repeat_filter_node" name="odom_repeat_filter">
+      <param name="odom_frame" value="$(arg odom_frame)"/>
+      <param name="base_frame" value="$(arg base_frame)"/>
+      <remap from="odom_vel" to="raw_odom"/>
+    </node>-->
+    <!--<node pkg="tf_to_topic" type="tf_to_topic" name="tf_to_topic" output="screen">                            
+      <param name="child_frame" value="$(arg base_frame)"/>                                                           
+      <param name="parent_frame" value="$(arg odom_frame)"/>                                                                
+      <param name="tf_topic" value="odom_filtered"/>                                                            
+      <param name="rate" type="double" value="20"/>                                                                                                                          
+    </node>-->
+    
     <node pkg="imu_reframer" type="imu_reframer_node" name="imu_reframer">
       <param name="new_frame" value="$(arg name)/imu2"/>
     </node>
     <!--<node pkg="tf2_ros" type="static_transform_publisher" name="imu_tf" args="0 0 0 3.134499 0.002063 -3.117097 $(arg name)/imu_link $(arg name)/imu2"/>-->
     <node if="$(arg odom_config_1)" pkg="tf2_ros" type="static_transform_publisher" name="imu_tf" args="0 0 0 -1.5708 1.5708 1.5708 $(arg name)/imu_link $(arg name)/imu2"/>
     <node if="$(arg odom_config_2)" pkg="tf2_ros" type="static_transform_publisher" name="imu_tf" args="0 0 0 0 0 0 $(arg name)/imu_link $(arg name)/imu2"/>
+    <node  pkg="tf2_ros" type="static_transform_publisher" name="base_link" args="0 0 0 0 0 0 $(arg name)/base_link base_link"/>
 
     <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
       type="cartographer_occupancy_grid_node" args="-resolution 0.05" />
