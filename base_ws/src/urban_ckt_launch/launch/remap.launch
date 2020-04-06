@@ -125,7 +125,7 @@
     <param name="fiducial_file" value="$(env PWD)/fiducial_$(arg course)"/>
     <param name="coding_mode" value="$(arg mark_artifacts)"/>
     <param name="depth_transport" value="raw"/>
-    <param name="assume_flat_initialization" value="$(arg initialize_flat)"/>
+    <param name="initialize_flat" value="$(arg initialize_flat)"/>
   </node>
   <node pkg="subt_artifact_report" type="frame_alignment_node" name="frame_alignment_node" output="screen">
     <param name="gt_filename" value="$(env PWD)/GT/gt_$(arg course)_$(arg config).csv"/>

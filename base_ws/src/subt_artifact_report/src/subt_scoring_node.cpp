@@ -34,6 +34,7 @@ std::vector<std::tuple<std::string, tf::Point, int, std::string>> bad_artifacts;
 
 ros::Publisher *marker_pub;
 ofstream rmse_file;
+bool initialize_flat = false;  // Use zero for roll and pitch in darpa -> map frame. Useful for alpha course with no baseline on pitch observation to distal fiducial
 
 bool reverse_transform = true;
 void PublishMarkers() {
@@ -370,6 +371,10 @@ double HandleReport(
         darpa_frame_transform.child_frame_id = map_frame;
         EigenToTransformMsg(output_transform, darpa_frame_transform.transform);
       }
+      if (initialize_flat) {
+        darpa_frame_transform.transform.rotation =
+          tf::createQuaternionMsgFromYaw(tf::getYaw(darpa_frame_transform.transform.rotation));
+      }
       darpa_frame_transform.header.stamp = ros::Time::now();
       //      CvMatToTransformMsg(cvoutput_transform,
       //      darpa_frame_transform.transform);
@@ -638,6 +643,7 @@ int main(int argc, char *argv[]) {
   private_nh.param("rmse_filename", rmse_filename,
                    std::string("/var/tmp/rmse"));
   private_nh.param("coding_mode", coding_mode, false);
+  private_nh.param("initialize_flat", initialize_flat, false);
 
   // Hideous, lazy
   tf::TransformListener tfL_;
