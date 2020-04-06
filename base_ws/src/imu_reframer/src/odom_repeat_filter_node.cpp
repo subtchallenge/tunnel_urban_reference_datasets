@@ -2,44 +2,35 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <ros/ros.h>
 
-ros::Publisher *pub;
-ros::Time last_header_time = ros::Time(0);
-std::string base_frame, odom_frame;
-
-void handleOdom(const nav_msgs::Odometry::ConstPtr &data) {
-  //if (data->header.stamp - last_header_time < ros::Duration(0.001)) {
-  if (data->header.stamp <= last_header_time) {
+void handleOdom(ros::Publisher& pub, const std::string& new_frame,
+                const geometry_msgs::TwistStamped::ConstPtr &data) {
+  static ros::Time last_header_time = ros::Time(0);
+  if (last_header_time != ros::Time(0) && data->header.stamp <= last_header_time) {
+    ROS_ERROR_STREAM("Received out of order odometry message in odom reframer");
     return;
   } else {
     last_header_time = data->header.stamp;
-    nav_msgs::Odometry out = *data;
-    if(odom_frame.compare("na") != 0)
-      out.header.frame_id = odom_frame;
-    for (int i = 0; i < 6; i++) {
-      for (int j = 0; j < 6; j++) {
-        if (i == j) {
-          out.pose.covariance[i + j * 6] = 9e-2;
-          out.twist.covariance[i + j * 6] = 9e-2;
-        } else {
-          out.pose.covariance[i + j * 6] = 9e-3;
-          out.twist.covariance[i + j * 6] = 9e-3;
-        }
-      }
+    geometry_msgs::TwistStamped out = *data;
+    if (new_frame.compare("na") != 0) {
+      out.header.frame_id = new_frame;
     }
-    pub->publish(out);
+    pub.publish(out);
   }
 }
 
-void handleVel(const geometry_msgs::TwistStamped::ConstPtr &data) {
-  //if (data->header.stamp - last_header_time < ros::Duration(0.001)) {
-  if (data->header.stamp <= last_header_time) {
+void handleVel(ros::Publisher& pub, const std::string& new_frame, const std::string& base_frame,
+               const geometry_msgs::TwistStamped::ConstPtr &data) {
+  static ros::Time last_header_time = ros::Time(0);
+  if (last_header_time != ros::Time(0) && data->header.stamp <= last_header_time) {
+    ROS_ERROR_STREAM("Received out of order odometry message in odom reframer");
     return;
   } else {
+    ROS_ERROR_STREAM("Publishing translated odom");
     last_header_time = data->header.stamp;
     nav_msgs::Odometry out;
     out.twist.twist = data->twist;
-    if(odom_frame.compare("na") != 0) {
-      out.header.frame_id = odom_frame;
+    if (new_frame.compare("na") != 0) {
+      out.header.frame_id = new_frame;
       out.child_frame_id = base_frame;
     }
     for (int i = 0; i < 6; i++) {
@@ -53,7 +44,7 @@ void handleVel(const geometry_msgs::TwistStamped::ConstPtr &data) {
         }
       }
     }
-    pub->publish(out);
+    pub.publish(out);
   }
 }
 
@@ -61,12 +52,15 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "odom_repeat_filter");
   ros::NodeHandle nh;
   ros::NodeHandle pnh("~");
-  ros::Publisher publ = nh.advertise<nav_msgs::Odometry>("odom_filtered", 10);
+  ros::Publisher publ_odom = nh.advertise<nav_msgs::Odometry>("odom_filtered", 10);
+  ros::Publisher publ_twist = nh.advertise<geometry_msgs::TwistStamped>("twist_filtered", 10);
+  std::string odom_frame, base_frame;
   pnh.param("odom_frame", odom_frame, std::string("odom"));
   pnh.param("base_frame", base_frame, std::string("na"));
-  pub = &publ;
-  ros::Subscriber sub_odom = nh.subscribe("odom_odom", 10, &handleOdom);
-  ros::Subscriber sub_vel = nh.subscribe("odom_vel", 10, &handleVel);
+  ros::Subscriber sub_odom =
+    nh.subscribe<geometry_msgs::TwistStamped>("odom", 10, boost::bind(&handleOdom, publ_twist, odom_frame, _1));
+  ros::Subscriber sub_vel =
+    nh.subscribe<geometry_msgs::TwistStamped>("odom_vel", 10, boost::bind(&handleVel, publ_odom, odom_frame, base_frame, _1));
   ros::spin();
   return -1;
 }

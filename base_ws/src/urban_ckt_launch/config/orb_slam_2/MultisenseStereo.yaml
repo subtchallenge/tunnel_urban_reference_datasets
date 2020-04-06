@@ -102,4 +102,4 @@ ORBextractor.nLevels: 8
 #ORBextractor.iniThFAST: 20
 #ORBextractor.minThFAST: 7
 ORBextractor.iniThFAST: 10
-ORBextractor.minThFAST: 3
+ORBextractor.minThFAST: 2
