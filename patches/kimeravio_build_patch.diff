@@ -1,0 +1,21 @@
+diff --git a/package.xml b/package.xml
+index f8b6c77..5c4c477 100644
+--- a/package.xml
++++ b/package.xml
+@@ -11,11 +11,11 @@
+ 
+   <depend>KimeraRPGO</depend>
+   <depend>GTSAM</depend>
+-  <depend>gflags</depend>
+-  <depend>glog</depend>
+-  <depend>opencv</depend>
+-  <depend>opengv</depend>
+-  <depend>dbow2</depend>
++  <depend>gflags_catkin</depend>
++  <depend>glog_catkin</depend>
++  <depend>opencv_catkin</depend>
++  <depend>opengv_catkin</depend>
++  <depend>dbow2_catkin</depend>
+   <export>
+     <!-- Specify that this is not really a catkin package-->
+     <build_type>cmake</build_type>

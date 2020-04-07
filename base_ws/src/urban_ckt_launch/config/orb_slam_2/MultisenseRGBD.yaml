@@ -1,0 +1,51 @@
+%YAML:1.0
+
+# Camera calibration and distortion parameters (OpenCV)
+Camera.fx: 600.7606201171875
+Camera.fy: 602.1273193359375
+Camera.cx: 530.7537841796875
+Camera.cy: 272.0735778808594
+
+Camera.k1: -0.20848242938518524
+Camera.k2: 0.1229957863688469
+Camera.p1: 0.0005989724886603653
+Camera.p2: -0.00030653737485408783
+Camera.k3: 0.0046302578411996365
+
+Camera.width: 1024
+Camera.height: 544
+
+# Camera frames per second
+Camera.fps: 10.0
+
+# stereo baseline (distance between cameras in m?) times fx
+Camera.bf: 42.0532434082 #30.464328718 # 40
+
+# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+Camera.RGB: 1
+
+# Close/Far threshold. Baseline times.
+ThDepth: 30 # what is this?
+
+# Deptmap values factor (what pixel value in the depth image corresponds to 1m?)
+DepthMapFactor: 1.0
+
+#--------------------------------------------------------------------------------------------
+# ORB Parameters
+#--------------------------------------------------------------------------------------------
+
+# ORB Extractor: Number of features per image
+ORBextractor.nFeatures: 1000
+
+# ORB Extractor: Scale factor between levels in the scale pyramid
+ORBextractor.scaleFactor: 1.2
+
+# ORB Extractor: Number of levels in the scale pyramid
+ORBextractor.nLevels: 8
+
+# ORB Extractor: Fast threshold
+# Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
+# Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
+# You can lower these values if your images have low contrast
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 3

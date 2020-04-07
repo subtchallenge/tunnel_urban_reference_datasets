@@ -1,0 +1,10 @@
+diff --git a/package.xml b/package.xml
+index 252b850..358cc34 100644
+--- a/package.xml
++++ b/package.xml
+@@ -10,4 +10,5 @@
+   <buildtool_depend>catkin_simple</buildtool_depend>
+ 
+   <depend>gflags_catkin</depend>
++  <build_depend>opencv3_catkin</build_depend>
+ </package>

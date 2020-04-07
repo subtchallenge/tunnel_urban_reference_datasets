@@ -1,0 +1,27 @@
+- git:
+    local-name: apriltag
+    uri: https://github.com/AprilRobotics/apriltag.git
+- git:
+    local-name: apriltag_ros
+    uri: https://github.com/AprilRobotics/apriltag_ros.git
+- git:
+    local-name: cartographer_ws
+    uri: https://github.com/googlecartographer/cartographer.git
+- git:
+    local-name: cartographer_ros
+    uri: https://github.com/googlecartographer/cartographer_ros.git
+- git:
+    local-name: msckf_vio
+    uri: https://github.com/KumarRobotics/msckf_vio.git
+- hg:
+    local-name: multisense-ros
+    uri: https://bitbucket.org/crl/multisense_ros
+- git:
+    local-name: orb_slam_2_ros
+    uri: https://github.com/appliedAI-Initiative/orb_slam_2_ros.git
+- git:
+    local-name: viso2
+    uri: https://github.com/srv/viso2.git
+- git:
+    local-name: vins_fusion
+    uri: https://github.com/HKUST-Aerial-Robotics/VINS-Fusion.git

@@ -1,7 +1,34 @@
 # Tunnel Circuit DataSet README
-This quickstart guide outlines how to get started with the SubT Tunnel Circuit Dataset. For additional details, please refer to our accepted [ICRA paper](https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/ICRA2020_TunnelCktDataset.pdf).                                                                                                                                                                                                           
+This quickstart guide outlines how to get started with the SubT Tunnel and Urban Circuit Datasets. For additional details, please refer to our paper about the previous Tunnel circuit. [ICRA paper](https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/ICRA2020_TunnelCktDataset.pdf).                                                                                                                                                                                                           
 
-This dataset was collected by the Army Research Laboratory on behalf of DARPA to support further system development via offline component testing in a relevant environment.
+These datasets were collected by the Army Research Laboratory on behalf of DARPA to support further system development via offline component testing in a relevant environment.
+
+Urban:
+
+The SubT urban dataset consists of four ROS bag files which were recorded on our "GVRbot", which is a modified iRobot PackBot Explorer developed at the Ground Vehicle Systems Center (GVSC), formerly known as TARDEC. This robot is a tracked skid-steer chassis equipped with forward mounted flippers to assist with stair descent as well as traversing taller obstacles. The sensor loadout is similar to the Husky described below in the Tunnel section. The robot is equipped with an Ouster OS1-64 LiDAR mounted in an elevated placement to avoid self-occlusion. The robot is also equipped with a Multisense SL which provides a secondary LiDAR system as well as stereo vision and illumination. We have also added an SCD-30 CO2 sensor for the gas artifact. Unfortunately, the Thermal IR camera(s) mounted on the robots did not record useable data due to a compression parameter mistake.
+
+The message files used to handle the SCD-30 data can be found in the support code described in the tunnel section below. Note that it has been restructured somewhat since the Tunnel circuit to include an additional workspace to support the Kimera VIO analysis which is still a work in progress. There are now two workspaces under the subt_reference_datasets project. Users should probably only focus on the base_ws for now.
+
+On this release, the bag files are compressed with the lz4 option to greatly reduce their size for transmission. On our own analysis, decompressing them during playback is too slow, so they should be decompressed by the user via rosbag decompress prior to use.
+
+Bag file description and links:
+
+Alpha course, upper floor. Configuration 2:
+https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/a_lvl_1.bag
+
+Alpha course, lower floor. Configuration 2. Robot goes down the stairs shortly after start:
+https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/a_lvl_2.bag
+
+Beta course, upper floor. Configuration 2:
+https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/b_lvl_1.bag
+
+Beta course, lower floor. Goes pretty far to get to stairs. Ouster data not available due to equipment failure (DC converter):
+https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/b_lvl_2.bag
+
+Support data for the analysis from the ICRA paper is being processed and will be available at this link:
+https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/support.tgz
+
+Tunnel:
 
 The SubT tunnel dataset consists of three ROS bag files which were recorded on our Clearpath Husky robot during teleoperation within the Safety Research (SR) and Experimental (EX) courses. 
 At present, only Configuration B is represented in the dataset due to technical difficulties involved in the early collection process. The dataset consists of two runs in the SR course and one in the EX course.
@@ -32,17 +59,24 @@ git clone git@bitbucket.org:subtchallenge/subt_reference_datasets.git
 Build:
 ```
 cd subt_reference_datasets
+wstool update -t base_ws/src
+wstool update -t kimera_ws/src
+. apply_required_build_patches.sh
+rosdep install -y --from-paths base_ws/src --ignore-src --rosdistro melodic
+rosdep install -y --from-paths kimera_ws/src --ignore-src --rosdistro melodic
+cd base_ws
 catkin init
-catkin config --extend YOUR_ROS_CATKIN_WORKSPACE
-cd src
-wstool update
-catkin build -c
-source devel/setup.bash
+catkin config --extend YOUR_ROS_CATKIN_WORKSPACE --merge-devel --cmake-args -DCMAKE_BUILD_TYPE=Release
+catkin build
+cd ../kimera_ws
+catkin init
+catkin config --extend ../base_ws/devel --merge-devel --cmake-args -DCMAKE_BUILD_TYPE=Release
+catkin build
 ```
 Go to the directory where you have placed the tunnel circuit bag files
 ```
 cd ~/data/tunnel_ckt
-roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag reproject:=false rate:=2.0 odom_only:=true course:=sr config:=B
+roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag rate:=2.0 odom_only:=true course:=sr config:=B
 ```
 Arguments:
 
@@ -86,7 +120,20 @@ Fiducial tracks were automatically inserted into the coding file. The global "da
 Fiducial tracking was performed automatically by the coding node and is inserted into the coding file. Only the final observation of each fiducial is used, under the assumption that this one is the closest to the vehicle and therefore will have the best range accuracy.
 Scores are updated when an artifact is observed via composing the darpa -> map frame + the user's map-> chinook/odom frame correction with the recorded chinook/odom -> chinook/base transform and the coded local position. This resulting global position is compared with the ground truth file; a point is scored if the position is within 5     meters of an artifact with the same label. RMSE is updated by all artifact reports even if they are too inaccurate to achieve a scored point.
 
-
+Some other examples of launch commands are as follows:  
+Odom Only:  
+```
+roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag odom_only:=true course:=sr config:=B
+```
+Cartographer:  
+```
+roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag cartographer:=true noodom:=true course:=sr config:=B
+```
+ORB-SLAM2:  
+```
+roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag orbslam:=true course:=sr config:=B
+```
+**Note: If you are utilized the compressed bags and the `/clock` topic is intermittent, use a playback rate of <1. I recommend a playback rate of 0.25 to 0.5**  
 
 # STIX DataSet README
 
