@@ -145,6 +145,7 @@
     <param name="report_frame" value="$(arg name)/base"/>
     <param name="map_frame" value="$(arg name)/map"/>
     <param name="odom_frame" value="$(arg name)/odom"/>
+    <param name="initialize_flat" value="$(arg initialize_flat)"/>
   </node>
   <group if="$(arg mark_artifacts)">
     <node pkg="image_transport" type="republish" name="republish_left_image" output="screen" args="_image_transport:=compressed in:=/$(arg name)/multisense/left/image_rect_color raw out:=/$(arg name)/multisense/left/image_rect_color_raw" />

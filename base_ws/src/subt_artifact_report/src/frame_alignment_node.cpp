@@ -56,6 +56,7 @@ class FrameAlignmentNode {
     std::map<std::string, std::tuple<tf::Point, tf::Point> >
       frame_correspondences_seen;
     std::string report_frame;
+    bool initialize_flat = false;  // Use zero for roll and pitch in darpa -> map frame. Useful for alpha course with no baseline on pitch observation to distal fiducial
 
     void PublishMarkers() const;
     void onCameraInfo(const sensor_msgs::CameraInfo::ConstPtr& msg);
@@ -80,6 +81,8 @@ FrameAlignmentNode(): nh(), private_nh("~"), it(nh), tfL(ros::Duration(20.0)){
   private_nh.param("map_frame", map_frame, std::string("map"));
   private_nh.param("odom_frame", odom_frame, std::string("odom"));
   private_nh.param("report_frame", report_frame, std::string("base"));
+  
+  private_nh.param("initialize_flat", initialize_flat, false);
 
   marker_pub =
     nh.advertise<visualization_msgs::MarkerArray>("artifact_markers", 1);
@@ -382,6 +385,10 @@ void FrameAlignmentNode::UpdateTransform(const std::string& report_string,
       global_frame_transform.child_frame_id = "darpa";
       EigenToTransformMsg(output_transform.inverse(), global_frame_transform.transform);
       global_frame_transform.header.stamp = ros::Time::now();
+      if (initialize_flat) {
+        global_frame_transform.transform.rotation =
+          tf::createQuaternionMsgFromYaw(tf::getYaw(global_frame_transform.transform.rotation));
+      }
       tfB.sendTransform(global_frame_transform);
     }
   }
