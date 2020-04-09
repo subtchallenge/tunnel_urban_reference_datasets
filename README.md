@@ -1,9 +1,9 @@
-# SubT Reference Datasets README:
+# SubT Reference Dataset README
 This quickstart guide outlines how to get started with the SubT Tunnel and Urban Circuit Datasets. For additional details, please refer to our paper about the previous Tunnel circuit. [ICRA paper](https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/ICRA2020_TunnelCktDataset.pdf).                                                                                                                                                                                                           
 
 These datasets were collected by the Army Research Laboratory on behalf of DARPA to support further system development via offline component testing in a relevant environment.
 
-# Urban:
+## Urban Circuit Dataset:
 
 The SubT urban dataset consists of four ROS bag files which were recorded on our "GVRbot", which is a modified iRobot PackBot Explorer developed at the Ground Vehicle Systems Center (GVSC), formerly known as TARDEC. This robot is a tracked skid-steer chassis equipped with forward mounted flippers to assist with stair descent as well as traversing taller obstacles. The sensor loadout is similar to the Husky described below in the Tunnel section. The robot is equipped with an Ouster OS1-64 LiDAR mounted in an elevated placement to avoid self-occlusion. The robot is also equipped with a Multisense SL which provides a secondary LiDAR system as well as stereo vision and illumination. We have also added an SCD-30 CO2 sensor for the gas artifact. Unfortunately, the Thermal IR camera(s) mounted on the robots did not record useable data due to a compression parameter mistake.
 
@@ -28,7 +28,7 @@ https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/b_lvl_2.bag
 Support data for the analysis from the ICRA paper is being processed and will be available at this link:
 https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/support.tgz
 
-# Tunnel:
+## Tunnel Circuit Dataset:
 
 The SubT tunnel dataset consists of three ROS bag files which were recorded on our Clearpath Husky robot during teleoperation within the Safety Research (SR) and Experimental (EX) courses. 
 At present, only Configuration B is represented in the dataset due to technical difficulties involved in the early collection process. The dataset consists of two runs in the SR course and one in the EX course.
@@ -51,8 +51,8 @@ https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/sr_B_route1.bag (19.6 GB)
 
 https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/sr_B_route2.bag (16.3 GB)
 
-# USAGE:
-First, download the publich catkin workspace from : 
+## Usage:
+First, download the public catkin workspace from : 
 
 git clone git@bitbucket.org:subtchallenge/subt_reference_datasets.git
 
@@ -135,9 +135,9 @@ roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag orbslam:=true cour
 ```
 **Note: If you are utilized the compressed bags and the `/clock` topic is intermittent, use a playback rate of <1. I recommend a playback rate of 0.25 to 0.5**  
 
-# STIX DataSet README
+## STIX DataSet:
 
-## Equipment
+### Equipment
 The STIX datasets were collected with a refurbished iRobot Packbot Explorer, which has been designated "GVRBot". This robot has been augmented with many sensors which are representative of an entry to the DARPA SubT challenge. The sensor modalities chosen represent a superset of typical configurations; this allows a team to experiment with various combinations to evaluate their applicability to the SubT challenge on their specific software.
 
 The robot is equipped with an Ouster OS1-64 (3D LiDAR) , a FLIR Tau2 thermal IR camera, a Carnegie Robotics Multisense SL stereo camera + illuminators + spinning LiDAR, and a Microstrain GX5-25 IMU. The robot was also equipped with a Point Grey Chameleon which was a spare device and not used in this data collection. Data was saved onto an SSD in the computing payload.
@@ -146,17 +146,17 @@ The robot is equipped with an Ouster OS1-64 (3D LiDAR) , a FLIR Tau2 thermal IR 
 
 ![Robot Front View](GVRBotFrontCallouts.jpg)
 
-## Software
+### Software
 The data sets were collected using ROS drivers for sensor components where available. Imagery was collected in compressed or compressedDepth format to reduce file sizes. These can be reconstructed to their raw form through the use of image_transport "republish" ROS nodes, or by using image_transport when subscribing to the topics.
 ### Ouster OS1-64
 Uses https://github.com/ouster-lidar/ouster_example driver. Has been modified to tag output with current system time (ros::Time::now()) instead of just using device timestamp, which starts at zero. The timestamp on the device was not set due to lack of supporting hardware on our part, which will be rectified in future collections. To reduce jitter, the offset between system time and device time is continuously estimated, and composed with the device time to get something closer which will only be offset by an unknown delay parameter. 
 
 We have recorded the ouster packets directly to support re-generating the clouds, perhaps with better estimates of time delay, if desired. In addition, the OS1 device generates its own internal IMU data, which would have the correct timestamps for the LiDAR points. We have recorded this but not used it yet. Finally, the point clouds are also recorded at 10 Hz.
 
-### Multisense SL
+#### Multisense SL
 Uses full driver stack provided by Carnegie Robotics. Device was calibrated at the factory. We attempted to capture all relevant topics and calibration data.
 
-### FLIR Tau2
+#### FLIR Tau2
 We have provided the thermal IR data from this sensor, on the topic 
 
 cv_camera/image_raw/compressed. 
@@ -164,12 +164,12 @@ cv_camera/image_raw/compressed.
 Intrinsic calibration of this sensor was not performed, so the camera_info message should not be used as is. An interested user could attempt to calibrate by looking at common features between the thermal IR image and the Multisense SL, such as lights whcih show up in both.
 
 
-### Microstrain IMU
+#### Microstrain IMU
 Raw microstrain imu data is recorded. This is also incorporated with the platform's odometry (which is also recorded separately) into a gvrbot/odom to gvrbot/base (base\_link?) frame. This can be stripped out if desired through the use of the tf_hijacker node which is provided in the bitbucket site at
 https://bitbucket.org/subtchallenge/subt_reference_datasets/src/master/.
 This project also contains helpful launch files which can be used to run these bag files.
 
-## Other considerations
+### Other considerations
 
 We were running our own mapping system while collecting this data, which results in the TF tree containing a map to gvrbot/odom frame. When evaluating your own mapping system, this frame will need to be stripped through the use of the tf_hijacker node, which is provided in the bitbucket site.
 
@@ -178,7 +178,7 @@ The FLIR data cuts out near the end of the long loop bag file.
 Extrinsic calibration of sensor positions is quite rough and might be insufficient to generate really accurate maps. Sufficiently motivated parties could use the tf_hijacker node to remove inaccurate transforms which could then be re-inserted through the use of a tf2_ros/static_transform_publisher.
 
 
-## Run notes
+### Run notes
 
 1. subt\_edgar\_hires\_2019-04-11-13-31-25.bag  
   * Description: Main loop plus drilling museum. Total length ~26 minutes  
