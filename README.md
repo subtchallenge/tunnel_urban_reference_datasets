@@ -1,9 +1,9 @@
-# Tunnel Circuit DataSet README
+# SubT Reference Datasets README:
 This quickstart guide outlines how to get started with the SubT Tunnel and Urban Circuit Datasets. For additional details, please refer to our paper about the previous Tunnel circuit. [ICRA paper](https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/ICRA2020_TunnelCktDataset.pdf).                                                                                                                                                                                                           
 
 These datasets were collected by the Army Research Laboratory on behalf of DARPA to support further system development via offline component testing in a relevant environment.
 
-Urban:
+# Urban:
 
 The SubT urban dataset consists of four ROS bag files which were recorded on our "GVRbot", which is a modified iRobot PackBot Explorer developed at the Ground Vehicle Systems Center (GVSC), formerly known as TARDEC. This robot is a tracked skid-steer chassis equipped with forward mounted flippers to assist with stair descent as well as traversing taller obstacles. The sensor loadout is similar to the Husky described below in the Tunnel section. The robot is equipped with an Ouster OS1-64 LiDAR mounted in an elevated placement to avoid self-occlusion. The robot is also equipped with a Multisense SL which provides a secondary LiDAR system as well as stereo vision and illumination. We have also added an SCD-30 CO2 sensor for the gas artifact. Unfortunately, the Thermal IR camera(s) mounted on the robots did not record useable data due to a compression parameter mistake.
 
@@ -28,7 +28,7 @@ https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/b_lvl_2.bag
 Support data for the analysis from the ICRA paper is being processed and will be available at this link:
 https://subt-data.s3.amazonaws.com/SubT_Urban_Ckt/support.tgz
 
-Tunnel:
+# Tunnel:
 
 The SubT tunnel dataset consists of three ROS bag files which were recorded on our Clearpath Husky robot during teleoperation within the Safety Research (SR) and Experimental (EX) courses. 
 At present, only Configuration B is represented in the dataset due to technical difficulties involved in the early collection process. The dataset consists of two runs in the SR course and one in the EX course.
@@ -51,7 +51,7 @@ https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/sr_B_route1.bag (19.6 GB)
 
 https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/sr_B_route2.bag (16.3 GB)
 
-USAGE:
+# USAGE:
 First, download the publich catkin workspace from : 
 
 git clone git@bitbucket.org:subtchallenge/subt_reference_datasets.git
