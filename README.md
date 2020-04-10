@@ -54,7 +54,7 @@ https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/sr_B_route2.bag (16.3 GB)
 ## Usage:
 First, download the public catkin workspace from : 
 
-git clone git@bitbucket.org:subtchallenge/subt_reference_datasets.git
+git clone https://bitbucket.org/subtchallenge/subt_reference_datasets.git
 
 Build:
 ```
