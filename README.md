@@ -56,24 +56,27 @@ First, download the public catkin workspace from:
 
 git clone git@bitbucket.org:subtchallenge/subt_reference_datasets.git
 
-Docker Install:
-Clone workspace inside of image (re-downloads the image and requires working exclusively within the docker container):
+### Docker Install:  
+**Option 1:** Clone workspace inside of image
+> Note: Downloads the workspace and requires working exclusively within the docker container.
 ```
 cd subt_reference_datasets/docker
 ./build.bash subt_reference_datasets_devel/
 ./run.bash subt_reference_datasets_devel/
 ```
 
-Mount workspace inside of image (allows one to modify files outside of the docker container for use in the docker container):
+**Option 2:** Mount workspace inside of image:
+> Note: Allows one to modify files outside of the docker container for use in the docker container.
 ```
 cd subt_reference_datasets/docker
 ./build.bash subt_reference_datasets_devel/
 ./run.bash subt_reference_datasets_devel/ ~/subt_reference_datasets/
 cd other/subt_reference_datasets/
 ```
-Then follow the Native Installation instructions below.
+Then follow the Native Installation instructions below.  
 
-Native Base Workspace Install for ROS Melodic: Currently supported
+### Native Installation:  
+**Base Workspace Installation: Currently supported**  
 > Note: `YOUR_ROS_CATKIN_WORKSPACE` is typically `/opt/ros/melodic` if you are not extending another workspace.  
 ```
 cd subt_reference_datasets
@@ -85,7 +88,7 @@ catkin config --extend YOUR_ROS_CATKIN_WORKSPACE --merge-devel --cmake-args -DCM
 catkin build
 ```
 
-Native Kimera Workspace Installation: Currently unsupported
+**Kimera Workspace Installation: Currently unsupported**  
 ```
 cd subt_reference_datasets
 wstool update -t kimera_ws/src
@@ -97,6 +100,7 @@ catkin config --extend ../base_ws/devel --merge-devel --cmake-args -DCMAKE_BUILD
 catkin build
 ```
 
+### Experimentation
 Go to the directory where you have placed the tunnel circuit bag files, in this case the bags are in the `data` folder sorted into `tunnel_ckt` and `urban_ckt` folders
 ```
 cd ~/data/tunnel_ckt
