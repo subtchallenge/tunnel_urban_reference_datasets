@@ -1,0 +1,9 @@
+<launch>
+
+  <arg name="name" default="sherman"/>
+  <arg name="bag"/>
+  <arg name="scale" default="1.0"/>
+  <param name="use_sim_time" value="true"/>
+  <node pkg="rosbag" type="play" name="bagplay" args="$(env PWD)/$(arg bag) --rate 5.0 --clock" launch-prefix="xterm -e"/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(env PWD)/rviz_$(arg name)_full.rviz"/>
+</launch>

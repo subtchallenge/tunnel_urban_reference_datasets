@@ -111,7 +111,7 @@
     <node if="$(arg kimera)" pkg="rviz" type="rviz" name="rviz_kimera" args="-d $(find urban_ckt_launch)/rviz/kimera_$(arg name).rviz"/>
   </group>
   <node pkg="static_transform_mux" type="static_transform_mux" name="static_transform_mux"/>
-  <node pkg="subt_artifact_report" type="subt_scoring_node" name="scoring_node" output="screen">
+  <node pkg="subt_artifact_report" type="subt_scoring_node" name="scoring_node" output="screen" launch-prefix="xterm -e">
     <param name="image" value="/$(arg name)/multisense/left/image_rect_color"/>
     <param name="depth_image" value="/$(arg name)/multisense/depth"/>
     <remap from="camera_info" to="/$(arg name)/multisense/left/image_rect_color/camera_info"/>
@@ -127,7 +127,7 @@
     <param name="depth_transport" value="raw"/>
     <param name="initialize_flat" value="$(arg initialize_flat)"/>
   </node>
-  <node pkg="subt_artifact_report" type="frame_alignment_node" name="frame_alignment_node" output="screen">
+  <node pkg="subt_artifact_report" type="frame_alignment_node" name="frame_alignment_node" output="screen" launch-prefix="xterm -e">
     <param name="gt_filename" value="$(env PWD)/GT/gt_$(arg course)_$(arg config).csv"/>
     <rosparam param="fiducials">
       - fiducial_24: {x: 0.501, y: 1.326, z: 0.596}
