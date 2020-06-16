@@ -20,16 +20,17 @@ TEST(RelativeMetricTest, rmse_test) {
 
   reports.push_back(std::make_pair("a", tf::Stamped<tf::Point>(tf::Point(1, 1, 1), ros::Time(0), "noframe")));
   assignment.push_back(0);
+  Eigen::MatrixXf transf;
 
-  ASSERT_NEAR(GetRMSE(gt_artifacts, reports, assignment), 0, 1e-5);
+  ASSERT_NEAR(GetRMSE(gt_artifacts, reports, assignment, &transf), 0, 1e-5);
   reports.push_back(std::make_pair("b", tf::Stamped<tf::Point>(tf::Point(2, 2, 2), ros::Time(0), "noframe")));
   assignment.push_back(1);
-  ASSERT_NEAR(GetRMSE(gt_artifacts, reports, assignment), 0, 1e-5);
+  ASSERT_NEAR(GetRMSE(gt_artifacts, reports, assignment, &transf), 0, 1e-5);
   reports.push_back(std::make_pair("c", tf::Stamped<tf::Point>(tf::Point(3, 3, 4), ros::Time(0), "noframe")));
   assignment.push_back(2);
-  ASSERT_NEAR(GetRMSE(gt_artifacts, reports, assignment), 0, 1e-5);
+  ASSERT_NEAR(GetRMSE(gt_artifacts, reports, assignment, &transf), 0, 1e-5);
   assignment[2] = 3;
-  ASSERT_NEAR(GetRMSE(gt_artifacts, reports, assignment), 0.0383, 1e-5);
+  ASSERT_NEAR(GetRMSE(gt_artifacts, reports, assignment, &transf), 0.0383, 1e-5);
 }
 
 TEST(RelativeMetricTest, da_test) {
@@ -47,15 +48,29 @@ TEST(RelativeMetricTest, da_test) {
   gt_artifacts.push_back(std::make_pair("a", tf::Point(5, 2, 3)));
   gt_artifacts.push_back(std::make_pair("a", tf::Point(1, 1, 1)));
   gt_artifacts.push_back(std::make_pair("a", tf::Point(2, 2, 3.1)));
-  reports.push_back(std::make_pair("a", tf::Stamped<tf::Point>(tf::Point(1, 1, 1), ros::Time(0), "noframe")));
-  reports.push_back(std::make_pair("a", tf::Stamped<tf::Point>(tf::Point(2, 2, 2), ros::Time(0), "noframe")));
-  reports.push_back(std::make_pair("a", tf::Stamped<tf::Point>(tf::Point(3, 3, 4), ros::Time(0), "noframe")));
   std::vector<int> assignment;
-  double rmse = GetBestRelativeDA(gt_artifacts, reports, &assignment);
+  Eigen::MatrixXf transform;
+  reports.push_back(std::make_pair("a", tf::Stamped<tf::Point>(tf::Point(1, 1, 1), ros::Time(0), "noframe")));
+  double rmse = GetBestRelativeDA(gt_artifacts, reports, &assignment, &transform);
   ASSERT_NEAR(rmse, 0.0, 1e-5);
   for (unsigned int i = 0; i < assignment.size(); i++) {
     std::cout << i << "->" << assignment[i] << std::endl;
   }
+  PrintMat(transform);
+  reports.push_back(std::make_pair("a", tf::Stamped<tf::Point>(tf::Point(2, 2, 2), ros::Time(0), "noframe")));
+  rmse = GetBestRelativeDA(gt_artifacts, reports, &assignment, &transform);
+  ASSERT_NEAR(rmse, 0.0, 1e-5);
+  for (unsigned int i = 0; i < assignment.size(); i++) {
+    std::cout << i << "->" << assignment[i] << std::endl;
+  }
+  PrintMat(transform);
+  reports.push_back(std::make_pair("a", tf::Stamped<tf::Point>(tf::Point(3, 3, 4), ros::Time(0), "noframe")));
+  rmse = GetBestRelativeDA(gt_artifacts, reports, &assignment, &transform);
+  ASSERT_NEAR(rmse, 0.0, 1e-5);
+  for (unsigned int i = 0; i < assignment.size(); i++) {
+    std::cout << i << "->" << assignment[i] << std::endl;
+  }
+  PrintMat(transform);
 
 }
 

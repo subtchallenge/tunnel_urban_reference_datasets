@@ -25,6 +25,7 @@ class SubTScoringNode {
   std::vector<tf::Point> fiducials_observed;
   std::vector<std::tuple<std::string, tf::Point, int, std::string>> good_artifacts;
   std::vector<std::tuple<std::string, tf::Point, int, std::string>> bad_artifacts;
+  std::vector<std::tuple<tf::Point, int>> relative_frame_aligned_artifacts;
 
   ros::Publisher marker_pub;
   ofstream rmse_file;

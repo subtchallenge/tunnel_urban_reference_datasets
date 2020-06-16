@@ -164,6 +164,36 @@ void SubTScoringNode::PublishMarkers() {
     delete_markers.markers.push_back(text_marker);
   }
   marker.color.r = 1.0;
+  marker.color.g = 0.5;
+  marker.color.b = 0.5;
+  marker.color.a = 1.0;
+  for (size_t i = 0; i < relative_frame_aligned_artifacts.size(); i++) {
+    marker.pose.position.x = std::get<0>(relative_frame_aligned_artifacts[i]).x();
+    marker.pose.position.y = std::get<0>(relative_frame_aligned_artifacts[i]).y();
+    marker.pose.position.z = std::get<0>(relative_frame_aligned_artifacts[i]).z();
+    send_markers.markers.push_back(marker);
+    marker.action = visualization_msgs::Marker::DELETE;
+    delete_markers.markers.push_back(marker);
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.id++;
+    visualization_msgs::Marker line_marker = marker;
+    line_marker.type = visualization_msgs::Marker::LINE_LIST;
+    line_marker.scale.x = 0.1;
+    line_marker.pose.position.x = 0;
+    line_marker.pose.position.y = 0;
+    line_marker.pose.position.z = 0;
+    line_marker.points.push_back(marker.pose.position);
+    geometry_msgs::Point distal_pt;
+    distal_pt.x = gt_artifacts[std::get<1>(relative_frame_aligned_artifacts[i])].second.x();
+    distal_pt.y = gt_artifacts[std::get<1>(relative_frame_aligned_artifacts[i])].second.y();
+    distal_pt.z = gt_artifacts[std::get<1>(relative_frame_aligned_artifacts[i])].second.z();
+    line_marker.points.push_back(distal_pt);
+    send_markers.markers.push_back(line_marker);
+    line_marker.action = visualization_msgs::Marker::DELETE;
+    delete_markers.markers.push_back(line_marker);
+    marker.id++;
+  }
+  marker.color.r = 1.0;
   marker.color.g = 1.0;
   marker.color.b = 0.0;
   marker.color.a = 1.0;
@@ -405,7 +435,6 @@ HandleReport(const std::tuple<double, std::string, tf::Stamped<tf::Point>> &repo
 	"between "
 		<< map_frame << " and " << std::get<2>(report).frame_id_
 		<< " : " << ex.what() << std::endl;
-      std::cerr << "Now resuming with relative metric" << std::endl;
       local_frame_good = false;
     }
     if (local_frame_good) {
@@ -417,66 +446,81 @@ HandleReport(const std::tuple<double, std::string, tf::Stamped<tf::Point>> &repo
         << " in frame " << map_frame
         << std::endl;
       std::vector<int> best_relative_da;
-      relative_RMSE = GetBestRelativeDA(gt_artifacts, relative_reports, &best_relative_da);
+      Eigen::MatrixXf relative_transform;
+      relative_RMSE = GetBestRelativeDA(gt_artifacts, relative_reports, &best_relative_da, &relative_transform);
       std::cout << "Relative RMSE of " << relative_RMSE << " was achieved with assignment: " << std::endl;
       for (int i = 0; i < best_relative_da.size(); i++) {
         std::cout << i << " -> " << best_relative_da[i] << std::endl;
+      }
+      relative_frame_aligned_artifacts.clear();
+      for (unsigned int i = 0; i < best_relative_da.size(); i++) {
+        Eigen::MatrixXf tmp(4, 1);
+        tmp(0, 0) = relative_reports[i].second.x();
+        tmp(1, 0) = relative_reports[i].second.y();
+        tmp(2, 0) = relative_reports[i].second.z();
+        tmp(3, 0) = 1.0;
+        Eigen::MatrixXf tmp2 = relative_transform * tmp;
+        PrintMat(tmp2);
+        relative_frame_aligned_artifacts.push_back(std::make_tuple(tf::Point(tmp2(0, 0),
+                                                                             tmp2(1, 0),
+                                                                             tmp2(2, 0)),
+                                                                   best_relative_da[i]));
       }
     }
     tf::StampedTransform global_transf;
     bool global_frame_good = true;
     try {
       tfL.waitForTransform(std::get<2>(report).frame_id_, "darpa",
-			   std::get<2>(report).stamp_, ros::Duration(0.5));
+                           std::get<2>(report).stamp_, ros::Duration(0.5));
       tfL.lookupTransform(std::get<2>(report).frame_id_, "darpa",
-			  std::get<2>(report).stamp_, global_transf);
+                          std::get<2>(report).stamp_, global_transf);
     } catch (const tf::TransformException &ex) {
       std::cerr << "Unable to compute darpa to local frame transform for "
-	"artifact. Make sure you are providing transform chain "
-	"between "
-		<< map_frame << " and " << std::get<2>(report).frame_id_
-		<< " : " << ex.what() << std::endl;
+        "artifact. Make sure you are providing transform chain "
+        "between "
+        << map_frame << " and " << std::get<2>(report).frame_id_
+        << " : " << ex.what() << std::endl;
       std::cerr << "Now resuming with relative metric" << std::endl;
       global_frame_good = false;
     }
     if (global_frame_good) {
       tf::Point pt_darpa = global_transf.inverse() * std::get<2>(report);
       std::cout << "Currently seeing a " << std::get<1>(report) << " at location "
-		<< pt_darpa.x() << ", " << pt_darpa.y() << ", " << pt_darpa.z()
-		<< std::endl;
+        << pt_darpa.x() << ", " << pt_darpa.y() << ", " << pt_darpa.z()
+        << std::endl;
       // Go through all of the ground truth with the same label and find the
       // closest one
       // If it is close enough by SubT standards (< 5m residual) count a point and
       // include it for residual computation
       std::vector<std::pair<std::string, tf::Point>>::const_iterator closest_itr =
-	gt_artifacts.end();
+        gt_artifacts.end();
       double best_dist = std::numeric_limits<double>::infinity();
       double best_distxy = std::numeric_limits<double>::infinity();
       int ind = 0;
       int best_ind = -1;
       for (std::vector<std::pair<std::string, tf::Point>>::const_iterator itr =
-             gt_artifacts.begin();
-	   itr != gt_artifacts.end(); itr++, ind++) {
+           gt_artifacts.begin();
+           itr != gt_artifacts.end(); itr++, ind++) {
 
-	if (itr->first == std::get<1>(report)) {
-	  double dist = pt_darpa.distance(itr->second);
-	  tf::Point pt_darpaxy(pt_darpa.x(), pt_darpa.y(), 0.0);
-	  tf::Point gt_pt_xy(itr->second.x(), itr->second.y(), 0.0);
-	  double distxy = pt_darpaxy.distance(gt_pt_xy);
+        if (itr->first == std::get<1>(report)) {
+          double dist = pt_darpa.distance(itr->second);
+          tf::Point pt_darpaxy(pt_darpa.x(), pt_darpa.y(), 0.0);
+          tf::Point gt_pt_xy(itr->second.x(), itr->second.y(), 0.0);
+          double distxy = pt_darpaxy.distance(gt_pt_xy);
 
-	  std::cout << "Comparing to same type of artifact at " << itr->second.x()
-		    << ", " << itr->second.y() << ", " << itr->second.z()
-		    << std::endl;
-	  std::cout << "Dist " << dist << std::endl;
-	  if (dist < best_dist) {
-	    best_dist = dist;
-	    closest_itr = itr;
-	    best_ind = ind;
-	  }
-	  if (distxy < best_distxy) {
-	    best_distxy = distxy;
-	  }
-	}
+          std::cout << "Comparing to same type of artifact at " << itr->second.x()
+            << ", " << itr->second.y() << ", " << itr->second.z()
+            << std::endl;
+          std::cout << "Dist " << dist << std::endl;
+          if (dist < best_dist) {
+            best_dist = dist;
+            closest_itr = itr;
+            best_ind = ind;
+          }
+          if (distxy < best_distxy) {
+            best_distxy = distxy;
+          }
+        }
       }
       if (closest_itr != gt_artifacts.end()) {
         if (best_dist <= 5.0) {

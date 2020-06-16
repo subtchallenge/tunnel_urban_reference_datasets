@@ -17,18 +17,14 @@ void PrintMat(const Eigen::MatrixXf& matr) {
     std::cout << std::endl;
   }
 }
-double GetRMSE(const std::vector<std::pair<std::string, tf::Point>>& gt_artifacts,
-               const std::vector<std::pair<std::string, tf::Stamped<tf::Point>>> &report,
-               const std::vector<int>& assignment) {
-  if (assignment.size() <= 1) return 0.0;
-  if (assignment.size() == 2) {
-    return fabs(sqrt(distsq(report[0].second, report[1].second)) -
-                sqrt(distsq(gt_artifacts[assignment[0]].second,
-                            gt_artifacts[assignment[1]].second)));
-  }
+
+Eigen::MatrixXf
+GetTransform(const std::vector<std::pair<std::string, tf::Point>>& gt_artifacts,
+             const std::vector<std::pair<std::string, tf::Stamped<tf::Point>>> &report,
+             const std::vector<int>& assignment) {
   Eigen::MatrixXf
-      src(3, assignment.size()),
-      dest(3, assignment.size());
+    src(3, assignment.size()),
+    dest(3, assignment.size());
   int i = 0;
   for (int i = 0; i < assignment.size(); i++) {
     tf::Point pt_src = report[i].second;
@@ -40,7 +36,21 @@ double GetRMSE(const std::vector<std::pair<std::string, tf::Point>>& gt_artifact
     dest(1, i) = pt_dest.y();
     dest(2, i) = pt_dest.z();
   }
-  Eigen::MatrixXf output_transform = Eigen::umeyama(src, dest, false);
+  return Eigen::umeyama(src, dest, false);
+}
+
+double GetRMSE(const std::vector<std::pair<std::string, tf::Point>>& gt_artifacts,
+               const std::vector<std::pair<std::string, tf::Stamped<tf::Point>>> &report,
+               const std::vector<int>& assignment,
+               Eigen::MatrixXf* transform) {
+  if (assignment.size() == 0) return 0;
+/*  if (assignment.size() <= 1) return 0.0;
+  if (assignment.size() == 2) {
+    return fabs(sqrt(distsq(report[0].second, report[1].second)) -
+                sqrt(distsq(gt_artifacts[assignment[0]].second,
+                            gt_artifacts[assignment[1]].second)));
+  }*/
+  *transform = GetTransform(gt_artifacts, report, assignment);
   double SE = 0.0;
   for (int i = 0; i < assignment.size(); i++) {
     // i indexes into report, assignment[i] indexes into gt_artifacts
@@ -49,7 +59,7 @@ double GetRMSE(const std::vector<std::pair<std::string, tf::Point>>& gt_artifact
     tmp(1, 0) = report[i].second.y();
     tmp(2, 0) = report[i].second.z();
     tmp(3, 0) = 1.0;
-    Eigen::MatrixXf tmp2 = output_transform * tmp;
+    Eigen::MatrixXf tmp2 = *transform * tmp;
     tf::Point tp1(tmp2(0, 0), tmp2(1, 0), tmp2(2, 0));
 
     SE += distsq(tp1, gt_artifacts[assignment[i]].second);
@@ -79,11 +89,21 @@ int GetDASize(const std::vector<std::pair<std::string, tf::Point>>& gt_artifacts
   }
   return multip_count + report.size();
 }
+
+typedef std::tuple<double, std::vector<int>, Eigen::MatrixXf> pq_type;
+
+struct ComparePqType{
+  bool operator () (const pq_type& left, const pq_type& right) {
+      return std::get<0>(left) > std::get<0>(right);
+  }
+};
 double GetBestRelativeDA(const std::vector<std::pair<std::string, tf::Point>>& gt_artifacts,
                          const std::vector<std::pair<std::string, tf::Stamped<tf::Point>>> &report,
-                         std::vector<int>* best_da) {
+                         std::vector<int>* best_da,
+                         Eigen::MatrixXf* best_transform) {
   // Find the lowest RMSE relative data association for a set of observations to the global locations
   //
+
 
   std::map<std::string, std::list<int> > gt_artifact_options;
   int ind = 0;
@@ -91,22 +111,22 @@ double GetBestRelativeDA(const std::vector<std::pair<std::string, tf::Point>>& g
        itr != gt_artifacts.end(); itr++, ind++) {
     gt_artifact_options[itr->first].push_back(ind);
   }
-  typedef std::pair<double, std::vector<int>> pq_type;
-  std::priority_queue<pq_type, std::vector<pq_type>, std::greater<pq_type>> open_queue;
-  open_queue.push(std::make_pair(0.0, std::vector<int>()));
+  std::priority_queue<pq_type, std::vector<pq_type>, ComparePqType> open_queue;
+  open_queue.push(std::make_tuple(0.0, std::vector<int>(), Eigen::MatrixXf()));
   int states_evaluated = 0;
   while (open_queue.size() != 0) {
-    std::pair<double, std::vector<int>> best_so_far = open_queue.top();
+    pq_type best_so_far = open_queue.top();
     open_queue.pop();
     states_evaluated++;
-    int allocate_obs_ind = best_so_far.second.size();  // Need to data associate the next index
+    int allocate_obs_ind = std::get<1>(best_so_far).size();  // Need to data associate the next index
     if (allocate_obs_ind >= report.size()) {
       // Done
     //  std::cout << "Found best data association : ";
-     // PrintDA(best_so_far.second);
-      *best_da = best_so_far.second;
+     // PrintDA(std::get<1>(best_so_far));
+      *best_da = std::get<1>(best_so_far);
+      *best_transform = std::get<2>(best_so_far);
       // std::cout << "Visited " << states_evaluated << " out of a possible " << GetDASize(gt_artifacts, report) << std::endl;
-      return best_so_far.first;
+      return std::get<0>(best_so_far);
     }
     std::string artifact_type = report[allocate_obs_ind].first;
     std::map<std::string, std::list<int>>::const_iterator artifact_itr = gt_artifact_options.find(artifact_type);
@@ -115,10 +135,11 @@ double GetBestRelativeDA(const std::vector<std::pair<std::string, tf::Point>>& g
       return -1.0;
     }
     for (std::list<int>::const_iterator itr = artifact_itr->second.begin(); itr != artifact_itr->second.end(); itr++) {
-      std::vector<int> tmp_da = best_so_far.second;
+      std::vector<int> tmp_da = std::get<1>(best_so_far);
       tmp_da.push_back(*itr);
-      double tmp_rmse = GetRMSE(gt_artifacts, report, tmp_da);
-      open_queue.push(std::make_pair(tmp_rmse, tmp_da)); 
+      Eigen::MatrixXf tmp_transform;
+      double tmp_rmse = GetRMSE(gt_artifacts, report, tmp_da, &tmp_transform);
+      open_queue.push(std::make_tuple(tmp_rmse, tmp_da, tmp_transform)); 
     }
   }
   std::cerr << "Didn't find any possible complete data associations" << std::endl;
