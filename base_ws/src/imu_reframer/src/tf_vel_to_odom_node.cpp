@@ -7,6 +7,7 @@
 ros::Publisher *pub;
 tf::TransformListener *listener;
 std::string base_frame, odom_frame;
+ros::Time last_stamp;
 
 void handleVel(const geometry_msgs::TwistStamped::ConstPtr &data) {
   tf::StampedTransform transform;
@@ -19,8 +20,15 @@ void handleVel(const geometry_msgs::TwistStamped::ConstPtr &data) {
   }
   
   nav_msgs::Odometry out;
+  ros::Duration odom_diff = transform.stamp_ - last_stamp;
+  if(odom_diff.toSec() < 0.03)
+  {
+    ROS_WARN("Skipping odometry message due to no update on tf odom.");
+    return;
+  }
+  last_stamp = transform.stamp_;
   out.header.stamp = transform.stamp_;
-  
+
   out.pose.pose.position.x = transform.getOrigin().x();
   out.pose.pose.position.y = transform.getOrigin().y();
   out.pose.pose.position.z = transform.getOrigin().z();
