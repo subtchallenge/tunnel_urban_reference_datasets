@@ -7,6 +7,7 @@
 ros::Publisher *pub;
 std::string base_frame, odom_frame;
 nav_msgs::Odometry out;
+ros::Time last_stamp;
 
 void timerCallback(const ros::TimerEvent&) {
   pub->publish(out);
@@ -15,6 +16,13 @@ void timerCallback(const ros::TimerEvent&) {
 void handleTf(const tf::tfMessage::ConstPtr &data) {
   for(int i=0; i<data->transforms.size(); i++) {
     if (data->transforms[i].header.frame_id == odom_frame && data->transforms[i].child_frame_id == base_frame) {
+      ros::Duration odom_diff = data->transforms[i].header.stamp - last_stamp;
+      if(odom_diff.toSec() < 0.01)
+      {
+        ROS_WARN("Skipping odometry message due to no update on tf odom.");
+        return;
+      }
+      last_stamp = data->transforms[i].header.stamp;
       out.header.stamp = data->transforms[i].header.stamp;
       out.pose.pose.position.x = data->transforms[i].transform.translation.x;
       out.pose.pose.position.y = data->transforms[i].transform.translation.y;
