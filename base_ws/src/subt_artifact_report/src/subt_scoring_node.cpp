@@ -558,19 +558,19 @@ HandleReport(const std::tuple<double, std::string, tf::Stamped<tf::Point>> &repo
       }
     }
     if (first == true) {
-      rmse_file << "Time  residual  points  RMSE  min_err   max_err  "
-        "residual2d  points2d  RMSE2d  min_err2d  max_err2d relative_RMSE"
+      rmse_file << "Time\tresidual\tpoints\tRMSE\tmin_err\tmax_err\t"
+        "residual2d\tpoints2d\tRMSE2d\tmin_err2d\tmax_err2d\trelative_RMSE"
         << std::endl;
       first = false;
     }
-    rmse_file << now_sec - now_sec_start << " " << residual << " " << points
-      << " " << RMSE << " " << min_error << " " << max_error << " "
-      << residualxy << " " << pointsxy << " " << RMSExy << " "
-      << min_errorxy << " " << max_errorxy << " " << relative_RMSE << std::endl;
-    std::cout << now_sec - now_sec_start << " " << residual << " " << points
-      << " " << RMSE << " " << min_error << " " << max_error << " "
-      << residualxy << " " << pointsxy << " " << RMSExy << " "
-      << min_errorxy << " " << max_errorxy << " " << relative_RMSE << std::endl;
+    rmse_file << now_sec - now_sec_start << "\t" << residual << "\t" << points
+      << "\t" << RMSE << "\t" << min_error << "\t" << max_error << "\t"
+      << residualxy << "\t" << pointsxy << "\t" << RMSExy << "\t"
+      << min_errorxy << "\t" << max_errorxy << "\t" << relative_RMSE << std::endl;
+    std::cout << now_sec - now_sec_start << "\t" << residual << "\t" << points
+      << "\t" << RMSE << "\t" << min_error << "\t" << max_error << "\t"
+      << residualxy << "\t" << pointsxy << "\t" << RMSExy << "\t"
+      << min_errorxy << "\t" << max_errorxy << "\t" << relative_RMSE << std::endl;
     rmse_file.flush();
     return residual;
   }
