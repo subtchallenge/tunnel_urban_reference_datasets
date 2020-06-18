@@ -67,6 +67,7 @@ class FrameAlignmentNode {
     void UpdateTransform(const std::string& report_string,
                          tf::Stamped<tf::Point> detection);
     apriltag_detector_t *td;
+    std::map<int,float> best_margins_;
 
  public:
     FrameAlignmentNode();
@@ -414,8 +415,18 @@ onImages(const sensor_msgs::ImageConstPtr &msg,
       for (int i = 0; i < zarray_size(detections); i++) {
         apriltag_detection_t *det;
         zarray_get(detections, i, &det);
-        if (det->decision_margin < 30.0)
+        if (det->decision_margin < 60.0)
           continue;
+        std::map<int, float>::iterator it = best_margins_.find(det->id);
+        if (it != best_margins_.end()) {
+          if(det->decision_margin < it->second)
+            continue;
+          else
+            it->second = det->decision_margin;
+        }
+        else {
+          best_margins_.emplace(det->id, det->decision_margin);
+        }
 
         printf("detection %3d: id (%2dx%2d)-%-4d, hamming %d, margin %8.3f\n",
                i, det->family->nbits, det->family->h, det->id, det->hamming,
