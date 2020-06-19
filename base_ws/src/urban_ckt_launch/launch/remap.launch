@@ -64,7 +64,7 @@
     </group>
   </group>
   <group unless="$(arg reproject)">
-    <node pkg="rosbag" type="play" name="bagplay" required="true" args="$(env PWD)/$(arg bag) --rate $(arg rate) --clock --topics /$(arg name)/boson_forward/camera_info  /$(arg name)/boson_forward/image_raw/compressed /$(arg name)/boson_up/camera_info /$(arg name)/boson_up/image_raw/compressed /$(arg name)/cmd_vel /$(arg name)/husky_velocity_controller/odom /$(arg name)/imu/data /$(arg name)/joy /$(arg name)/mac80211/scan /$(arg name)/multisense/calibration/device_info /$(arg name)/multisense/calibration/raw_cam_cal /$(arg name)/multisense/calibration/raw_cam_config /$(arg name)/multisense/calibration/raw_lidar_cal /$(arg name)/multisense/depth/camera_info /$(arg name)/multisense/depth /$(arg name)/multisense/depth/compressedDepth /$(arg name)/multisense/imu/accelerometer /$(arg name)/multisense/imu/accelerometer_vector /$(arg name)/multisense/imu/gyroscope /$(arg name)/multisense/imu/gyroscope_vector /$(arg name)/multisense/imu/imu_data /$(arg name)/multisense/imu/magnetometer /$(arg name)/multisense/imu/magnetometer_vector /$(arg name)/multisense/left/camera_info /$(arg name)/multisense/left/image_rect_color/camera_info /$(arg name)/multisense/left/image_rect_color/compressed /$(arg name)/multisense/lidar_points2 /$(arg name)/multisense/pps /$(arg name)/multisense/right/camera_info /$(arg name)/multisense/right/image_rect/camera_info /$(arg name)/multisense/right/image_rect/compressed /$(arg name)/multisense/stamped_pps /$(arg name)/multisense/status /$(arg name)/assembled_cloud /$(arg name)/lidar_points /$(arg name)/odom /$(arg name)/ouster_driver/imu_packets /$(arg name)/ouster_driver/lidar_packets /sherman/scd30 /gvrbot_power_data /sherman/raw_odom  /diagnostics_agg /tf /tf_static tf:=tf_remap /$(arg name)/assembled_cloud:=/$(arg name)/old_assembled_cloud" launch-prefix="xterm -e"/>
+    <node pkg="rosbag" type="play" name="bagplay" required="true" args="$(env PWD)/$(arg bag) --rate $(arg rate) --start $(arg start) --clock --topics /$(arg name)/boson_forward/camera_info  /$(arg name)/boson_forward/image_raw/compressed /$(arg name)/boson_up/camera_info /$(arg name)/boson_up/image_raw/compressed /$(arg name)/cmd_vel /$(arg name)/husky_velocity_controller/odom /$(arg name)/imu/data /$(arg name)/joy /$(arg name)/mac80211/scan /$(arg name)/multisense/calibration/device_info /$(arg name)/multisense/calibration/raw_cam_cal /$(arg name)/multisense/calibration/raw_cam_config /$(arg name)/multisense/calibration/raw_lidar_cal /$(arg name)/multisense/depth/camera_info /$(arg name)/multisense/depth /$(arg name)/multisense/depth/compressedDepth /$(arg name)/multisense/imu/accelerometer /$(arg name)/multisense/imu/accelerometer_vector /$(arg name)/multisense/imu/gyroscope /$(arg name)/multisense/imu/gyroscope_vector /$(arg name)/multisense/imu/imu_data /$(arg name)/multisense/imu/magnetometer /$(arg name)/multisense/imu/magnetometer_vector /$(arg name)/multisense/left/camera_info /$(arg name)/multisense/left/image_rect_color/camera_info /$(arg name)/multisense/left/image_rect_color/compressed /$(arg name)/multisense/lidar_points2 /$(arg name)/multisense/pps /$(arg name)/multisense/right/camera_info /$(arg name)/multisense/right/image_rect/camera_info /$(arg name)/multisense/right/image_rect/compressed /$(arg name)/multisense/stamped_pps /$(arg name)/multisense/status /$(arg name)/assembled_cloud /$(arg name)/lidar_points /$(arg name)/odom /$(arg name)/ouster_driver/imu_packets /$(arg name)/ouster_driver/lidar_packets /sherman/scd30 /gvrbot_power_data /sherman/raw_odom  /diagnostics_agg /tf /tf_static tf:=tf_remap /$(arg name)/assembled_cloud:=/$(arg name)/old_assembled_cloud" launch-prefix="xterm -e"/>
     <group if="$(arg stix_mode)" ns="$(arg name)">
       <param name="tf_prefix" value="$(arg name)" />
 
@@ -111,7 +111,8 @@
     <node if="$(arg kimera)" pkg="rviz" type="rviz" name="rviz_kimera" args="-d $(find urban_ckt_launch)/rviz/kimera_$(arg name).rviz"/>
   </group>
   <node pkg="static_transform_mux" type="static_transform_mux" name="static_transform_mux"/>
-  <node pkg="subt_artifact_report" type="subt_scoring_node" name="scoring_node" output="screen" launch-prefix="xterm -e">
+  <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_ns_map" args="0 0 0 0 0 0 map $(arg name)/map"/>
+  <node pkg="subt_artifact_report" type="subt_scoring_node" name="scoring_node" output="screen" required="true" launch-prefix="xterm -e">
     <param name="image" value="/$(arg name)/multisense/left/image_rect_color"/>
     <param name="depth_image" value="/$(arg name)/multisense/depth"/>
     <remap from="camera_info" to="/$(arg name)/multisense/left/image_rect_color/camera_info"/>
@@ -161,10 +162,6 @@
   </node>
   <group ns="$(arg name)">
     <param name="tf_prefix" value="$(arg name)"/>
-    <node
-      name="$(anon robot_mesh_pub3)" pkg="rostopic" type="rostopic"
-      args="pub -l -r 1.0 /$(arg name)/robot_marker visualization_msgs/Marker '{header: {frame_id: &quot;$(arg name)/base&quot;}, type: 10, pose: {position: {x: 0, y: 0, z: 0.17}, orientation: {x: 0.707, y: 0.707, z: 0.0, w: 0.0}}, scale: {x: 1.0, y: 1.0, z: 1.0}, color: {r: 0.7, g: 0.7, b: 0.0, a: 1.0}, frame_locked: true, mesh_use_embedded_materials: true, mesh_resource: &quot;package://demo_cerberus_explore/meshes/husky.dae&quot;}'"
-      output="screen"/>
 
     <group if="$(arg omnimapper)">
       <node if="$(arg omnimapper)" pkg="omnimapper_tools" type="stamp_point_clouds" name="cloud_stamper">
