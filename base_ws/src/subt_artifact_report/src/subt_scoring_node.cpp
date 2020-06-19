@@ -558,19 +558,48 @@ HandleReport(const std::tuple<double, std::string, tf::Stamped<tf::Point>> &repo
       }
     }
     if (first == true) {
-      rmse_file << "Time  residual  points  RMSE  min_err   max_err  "
-        "residual2d  points2d  RMSE2d  min_err2d  max_err2d relative_RMSE"
-        << std::endl;
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "Time";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "residual";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "points";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "RMSE";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "min_err";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "max_err";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "residual2d";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "points2d";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "RMSE2d";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "min_err2d";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "max_err2d";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << "relative_RMSE";
+      rmse_file << std::left << std::setw(12) << std::setfill(' ') << std::endl;
       first = false;
     }
-    rmse_file << now_sec - now_sec_start << " " << residual << " " << points
-      << " " << RMSE << " " << min_error << " " << max_error << " "
-      << residualxy << " " << pointsxy << " " << RMSExy << " "
-      << min_errorxy << " " << max_errorxy << " " << relative_RMSE << std::endl;
-    std::cout << now_sec - now_sec_start << " " << residual << " " << points
-      << " " << RMSE << " " << min_error << " " << max_error << " "
-      << residualxy << " " << pointsxy << " " << RMSExy << " "
-      << min_errorxy << " " << max_errorxy << " " << relative_RMSE << std::endl;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << now_sec - now_sec_start;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << residual;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << points;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << RMSE;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << min_error;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << max_error;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << residualxy;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << pointsxy;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << RMSExy;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << min_errorxy;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << max_errorxy;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << relative_RMSE;
+    rmse_file << std::left << std::setw(12) << std::setfill(' ') << std::endl;
+
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << now_sec - now_sec_start;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << residual;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << points;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << RMSE;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << min_error;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << max_error;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << residualxy;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << pointsxy;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << RMSExy;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << min_errorxy;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << max_errorxy;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << relative_RMSE;
+    std::cout << std::left << std::setw(12) << std::setfill(' ') << std::endl;
     rmse_file.flush();
     return residual;
   }
