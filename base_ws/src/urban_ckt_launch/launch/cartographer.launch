@@ -15,8 +15,7 @@
       type="cartographer_node" args="
       -configuration_directory $(find urban_ckt_launch)/config/cartographer
       -configuration_basename cartographer_$(arg mode)_$(arg name)_$(arg odom_mode).lua"
-      required="true"
-      output="screen">
+      required="true">
       <remap from="points2" to="$(arg lidar_topic)" />
       <remap from="imu" to="imu_reframed/data"/>
       <remap from="odom" to="$(arg odom_topic)"/>
