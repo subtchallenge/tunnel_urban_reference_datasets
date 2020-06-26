@@ -63,6 +63,7 @@ RUN sudo apt-get update \
   ros-melodic-random-numbers \
   ros-melodic-static-transform-mux \
   ros-melodic-tf-conversions \
+  xterm \
   && sudo apt-get clean
 
 # Set Working Directory
