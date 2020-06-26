@@ -1,40 +1,33 @@
 %YAML:1.0
 
 # Camera calibration and distortion parameters (OpenCV)
-Camera.fx: 600.7606201171875
-Camera.fy: 602.1273193359375
-Camera.cx: 530.7537841796875
-Camera.cy: 272.0735778808594
+Camera.fx: 383.9386901855469
+Camera.fy: 383.9386901855469
+Camera.cx: 322.4555358886719
+Camera.cy: 243.42393493652344
 
-#Camera.k1: -0.20848242938518524
-#Camera.k2: 0.1229957863688469
-#Camera.p1: 0.0005989724886603653
-#Camera.p2: -0.00030653737485408783
-#Camera.k3: 0.0046302578411996365
+Camera.k1: 0.0
+Camera.k2: 0.0
+Camera.p1: 0.0
+Camera.p2: 0.0
+Camera.k3: 0.0
 
-Camera.k1: 0
-Camera.k2: 0
-Camera.p1: 0
-Camera.p2: 0
-Camera.k3: 0
-
-Camera.width: 1024
-Camera.height: 544
+Camera.width: 640
+Camera.height: 480
 
 # Camera frames per second
-Camera.fps: 3.3
+Camera.fps: 30.0
 
 # stereo baseline (distance between cameras in m?) times fx
-Camera.bf: 42.0532434082 #30.464328718 # 40
+Camera.bf: 40
 
 # Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
 Camera.RGB: 1
 
 # Close/Far threshold. Baseline times.
-ThDepth: 30 # what is this?
+ThDepth: 40 # what is this?
 
-# Deptmap values factor (what pixel value in the depth image corresponds to 1m?)
-#DepthMapFactor: 1.0
+# Depthmap values factor (what pixel value in the depth image corresponds to 1m?)
 DepthMapFactor: 5000.0
 
 #--------------------------------------------------------------------------------------------
