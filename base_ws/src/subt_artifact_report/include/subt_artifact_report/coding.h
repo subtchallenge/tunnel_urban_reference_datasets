@@ -53,12 +53,13 @@ class CodingManager {
   ros::NodeHandle& private_nh_;
   std::map<std::string, std::pair<double, std::string> > reports_to_write_first;
   bool fiducials_done = false;
+  double depth_map_factor_;
 
   CodingManager(ros::NodeHandle& nh, ros::NodeHandle& private_nh);
   virtual ~CodingManager();
 };
 
-float find_depth_nearest_pixel(const cv::Mat& depth_image, int x, int y); 
+float find_depth_nearest_pixel(const cv::Mat& depth_image, int x, int y, float depth_map_factor); 
 bool ImageTo3DPoint(int x, int y, const CodingManager* md,
                     tf::Vector3& local_pt_vec, tf::Vector3& report_pt_vec);
 

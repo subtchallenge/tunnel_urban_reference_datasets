@@ -68,6 +68,7 @@ class FrameAlignmentNode {
                          tf::Stamped<tf::Point> detection);
     apriltag_detector_t *td;
     std::map<int,float> best_margins_;
+    double depth_map_factor_;
 
  public:
     FrameAlignmentNode();
@@ -139,17 +140,18 @@ FrameAlignmentNode(): nh(), private_nh("~"), it(nh), tfL(ros::Duration(20.0)){
       ROS_ERROR("%s", e.getMessage().c_str());
     }
   }
-  std::string image_name, depth_image_name;
+  std::string image_name, depth_image_name, img_transport;
   private_nh.param("image", image_name, std::string("image"));
-  private_nh.param("depth_image", depth_image_name,
-                   std::string("depth_image"));
+  private_nh.param("depth_image", depth_image_name, std::string("depth_image"));
+  private_nh.param("image_transport", img_transport, std::string("compressed"));
+  private_nh.param("depth_map_factor", depth_map_factor_, 1.0);
 
   info_sub =
     nh.subscribe<sensor_msgs::CameraInfo>("camera_info", 1,
                                           boost::bind(&FrameAlignmentNode::onCameraInfo,
                                                       this, _1));
   img_sub =
-    boost::make_shared<image_transport::SubscriberFilter>(it, image_name, 50, image_transport::TransportHints("compressed"));
+    boost::make_shared<image_transport::SubscriberFilter>(it, image_name, 50, image_transport::TransportHints(img_transport));
   depth_img_sub =
     boost::make_shared<image_transport::SubscriberFilter>(it, depth_image_name, 50);
   sync = boost::make_shared<message_filters::Synchronizer<MySyncPolicy> > (MySyncPolicy(50), *img_sub,
@@ -158,9 +160,9 @@ FrameAlignmentNode(): nh(), private_nh("~"), it(nh), tfL(ros::Duration(20.0)){
   ROS_INFO("Connected to image topics");
 }
 
-float find_depth_nearest_pixel(const cv::Mat& depth_image, int x, int y) {
+float find_depth_nearest_pixel(const cv::Mat& depth_image, int x, int y, float depth_map_factor) {
   float depth;
-  depth = depth_image.at<float>(y, x);
+  depth = depth_image.at<float>(y, x)/depth_map_factor;
   int xmin = x - 1;
   int xmax = x + 1;
   int ymin = y - 1;
@@ -201,7 +203,7 @@ ImageTo3DPoint(int x, int y, const cv::Mat& depth_image, const std::string& imag
                tf::Vector3& local_pt_vec, tf::Vector3& report_pt_vec) {
   if (!camera_model.initialized()) return false;
   float depth;
-  depth = find_depth_nearest_pixel(depth_image, x, y);
+  depth = find_depth_nearest_pixel(depth_image, x, y, float(depth_map_factor_));
   if (std::isnan(depth)) return false;
 
   cv::Point3d ray = camera_model.projectPixelTo3dRay(cv::Point2d(x, y));
@@ -415,7 +417,7 @@ onImages(const sensor_msgs::ImageConstPtr &msg,
       for (int i = 0; i < zarray_size(detections); i++) {
         apriltag_detection_t *det;
         zarray_get(detections, i, &det);
-        if (det->decision_margin < 60.0)
+        if (det->decision_margin < 30.0)
           continue;
         std::map<int, float>::iterator it = best_margins_.find(det->id);
         if (it != best_margins_.end()) {

@@ -21,6 +21,7 @@ CodingManager::CodingManager(ros::NodeHandle& nh, ros::NodeHandle& private_nh) :
   private_nh.param("image", image_name, std::string("image"));
   private_nh.param("depth_image", depth_image_name, std::string("depth_image"));
   private_nh.param("report_frame", report_frame, std::string("base"));
+  private_nh.param("depth_map_factor", depth_map_factor_, 1.0);
   std::string outfilename;
   private_nh.param("outfile", outfilename, std::string("/var/tmp/tunnel_ckt_coding_ws"));
   camera_model = boost::make_shared<image_geometry::PinholeCameraModel>();
@@ -55,9 +56,9 @@ CodingManager::~CodingManager() {
   apriltag_detector_destroy(td);
 
 }
-float find_depth_nearest_pixel(const cv::Mat& depth_image, int x, int y) {
+float find_depth_nearest_pixel(const cv::Mat& depth_image, int x, int y, float depth_map_factor) {
   float depth;
-  depth = depth_image.at<float>(y, x); 
+  depth = depth_image.at<float>(y, x)/depth_map_factor; 
   int xmin = x - 1;
   int xmax = x + 1;
   int ymin = y - 1;
@@ -100,7 +101,7 @@ bool ImageTo3DPoint(int x, int y, const CodingManager* md,
     float depth;
     {
       boost::mutex::scoped_lock l(md->depth_img_mutex);
-      depth = find_depth_nearest_pixel(md->depth_image, x, y);
+      depth = find_depth_nearest_pixel(md->depth_image, x, y, float(md->depth_map_factor_));
     }
     if (!isnan(depth)) {
       std::cout << "Saw mark at " << x << ", " << y 
