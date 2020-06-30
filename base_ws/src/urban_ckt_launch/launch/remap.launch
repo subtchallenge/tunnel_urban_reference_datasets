@@ -19,6 +19,7 @@
   <arg name="bag_out" default="false"/>
   <arg name="course" default="ex"/>
   <arg name="config" default="A"/>
+  <arg name="bag_postfix" default=""/>
   <arg name="initialize_flat" default="false"/>
 
     <!-- Mapping mode settings -->
@@ -167,20 +168,19 @@
       <node if="$(arg omnimapper)" pkg="omnimapper_tools" type="stamp_point_clouds" name="cloud_stamper">
         <param name="platform" value="$(arg name)"/>
       </node>
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).omnimapper.rmse"/>
+      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).omnimapper.rmse"/>
       <include if="$(arg omnimapper)" file="$(find mapping_launch)/launch/omnimapper_3d.launch">
         <arg name="name" value="$(arg name)"/>
       </include>
     </group>
     <group if="$(arg cartographer)">
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).cartographer_$(arg odom_mode).rmse"/>
-      <node name="cartographer_map_tf_pub" type="static_transform_publisher" pkg="tf2_ros" args="0 0 0 0 0 0 $(arg name)/map map"/>
+      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).cartographer_$(arg odom_mode).rmse"/>
+      <!--<node name="cartographer_map_tf_pub" type="static_transform_publisher" pkg="tf2_ros" args="0 0 0 0 0 0 $(arg name)/map map"/>-->
       <include file="$(find urban_ckt_launch)/launch/cartographer.launch">
         <arg name="name" value="$(arg name)"/>
         <arg unless="$(arg multisense)" name="lidar_topic" value="lidar_points"/>
         <arg if="$(arg multisense)" name="lidar_topic" value="multisense/lidar_points2"/>
         <arg name="odom_mode" value="$(arg odom_mode)"/>
-        <arg name="odom_topic" value="odom_filtered"/>
         <arg name="odom_frame" value="$(arg name)/odom"/>
         <arg name="base_frame" value="$(arg name)/base"/>
         <arg name="odom_config_1" value="$(arg odom_config_1)"/>
@@ -189,18 +189,18 @@
       </include>
     </group>
     <group if="$(arg gmapping)">
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).gmapping.rmse"/>
+      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).gmapping.rmse"/>
       <include file="gmapping.launch">
         <arg name="name" value="$(arg name)"/>
       </include>
     </group>
     <group if="$(arg odom_only)">
       <node if="$(arg odom_only)" name="odom_map_tf_pub" type="static_transform_publisher" pkg="tf2_ros" args="0 0 0 0 0 0 map $(arg name)/odom"/>
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).odom_only.rmse"/>
+      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).odom_only.rmse"/>
     </group>
     <!-- MSCKF -->
     <group if="$(arg msckf)">
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).msckf.rmse"/>
+      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).msckf.rmse"/>
         <!-- Left image is compressed, color. We will decompress then grayscale. -->
       <node pkg="image_transport" type="republish" name="republish_left_image" output="screen" args="_image_transport:=compressed in:=/$(arg name)/multisense/left/image_rect_color raw out:=/$(arg name)/multisense/left/image_rect_color_raw" />
       <node pkg="image_proc" type="image_proc" name="left_image_proc">
@@ -221,7 +221,7 @@
     </group>
     <!-- VINS -->
     <group if="$(arg vins)">
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).vins.rmse"/>
+      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).vins.rmse"/>
         <!-- Left image is compressed, color. We will decompress then grayscale. -->
       <node pkg="image_transport" type="republish" name="republish_left_image" output="screen" args="_image_transport:=compressed in:=/$(arg name)/multisense/left/image_rect_color raw out:=/$(arg name)/multisense/left/image_rect_color_raw" />
       <node pkg="image_proc" type="image_proc" name="left_image_proc">
@@ -236,7 +236,7 @@
     </group>
     <!-- ORBSLAM -->
     <group if="$(arg orbslam)">
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).orbslam.rmse"/>
+      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).orbslam.rmse"/>
         <!-- Left image is compressed, color. We will decompress then grayscale. -->
       <node pkg="image_transport" type="republish" name="republish_left_image" output="screen" args="_image_transport:=compressed in:=/$(arg name)/multisense/left/image_rect_color raw out:=/$(arg name)/multisense/left/image_rect_color_raw" />
       <node pkg="image_proc" type="image_proc" name="left_image_proc">
@@ -261,7 +261,7 @@
     </group>
     <!-- Kimera -->
     <group if="$(arg kimera)">
-      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag).kimera.rmse"/>
+      <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).kimera.rmse"/>
         <!-- Left image is compressed, color. We will decompress then grayscale. -->
       <node pkg="image_transport" type="republish" name="republish_left_image" output="screen" args="_image_transport:=compressed in:=/$(arg name)/multisense/left/image_rect_color raw out:=/$(arg name)/multisense/left/image_rect_color_raw" />
       <node pkg="image_proc" type="image_proc" name="left_image_proc">

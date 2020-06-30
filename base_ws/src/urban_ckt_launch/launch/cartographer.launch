@@ -4,7 +4,6 @@
   <arg name="mode" default="3d"/>
   <arg name="lidar_topic" default="ouster/points"/>
   <arg name="odom_mode" default="odom"/>
-  <arg name="odom_topic" default="odom"/>
   <arg name="odom_frame" default="odom"/>
   <arg name="base_frame" default="base"/>
   <arg name="odom_config_1" default="true"/>
@@ -18,9 +17,9 @@
       required="true">
       <remap from="points2" to="$(arg lidar_topic)" />
       <remap from="imu" to="imu_reframed/data"/>
-      <remap from="odom" to="$(arg odom_topic)"/>
+      <remap if="$(arg odom_config_1)" from="odom" to="odom_filtered"/>
     </node>
-    <node pkg="imu_reframer" type="tf_topic_vel_to_odom_node" name="tf_vel_to_odom" output="screen">
+    <node if="$(arg odom_config_1)" pkg="imu_reframer" type="tf_topic_vel_to_odom_node" name="tf_vel_to_odom" output="screen">
       <param name="interval" value="$(arg interval)"/>
       <param name="odom_frame" value="$(arg odom_frame)"/>
       <param name="base_frame" value="$(arg base_frame)"/>

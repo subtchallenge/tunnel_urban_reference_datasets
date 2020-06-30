@@ -417,7 +417,7 @@ onImages(const sensor_msgs::ImageConstPtr &msg,
       for (int i = 0; i < zarray_size(detections); i++) {
         apriltag_detection_t *det;
         zarray_get(detections, i, &det);
-        if (det->decision_margin < 30.0)
+        if (det->decision_margin < 45.0)
           continue;
         std::map<int, float>::iterator it = best_margins_.find(det->id);
         if (it != best_margins_.end()) {
