@@ -18,9 +18,9 @@ POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher_3d.linear_z_search_w
 POSE_GRAPH.constraint_builder.min_score = 0.75
 POSE_GRAPH.constraint_builder.global_localization_min_score = 0.80
 POSE_GRAPH.optimization_problem.local_slam_pose_translation_weight = 1e5
-POSE_GRAPH.optimization_problem.local_slam_pose_rotation_weight = 1e6
-POSE_GRAPH.optimization_problem.odometry_translation_weight = 1e4
-POSE_GRAPH.optimization_problem.odometry_rotation_weight = 0
+POSE_GRAPH.optimization_problem.local_slam_pose_rotation_weight = 1e5
+POSE_GRAPH.optimization_problem.odometry_translation_weight = 1e5
+POSE_GRAPH.optimization_problem.odometry_rotation_weight = 1e5
 
 function make_options(name)
   options = {
