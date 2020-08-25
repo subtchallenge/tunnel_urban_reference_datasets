@@ -152,10 +152,12 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_library(coding src/coding.cpp)
 target_link_libraries(coding ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
+add_library(relative src/relative_metric.cpp)
+target_link_libraries(relative ${catkin_LIBRARIES})
 add_executable(subt_coding_node src/subt_coding_node.cpp)
 target_link_libraries(subt_coding_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES} coding)
 add_executable(subt_scoring_node src/subt_scoring_node.cpp)
-target_link_libraries(subt_scoring_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES} coding)
+target_link_libraries(subt_scoring_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES} coding relative)
 add_executable(frame_alignment_node src/frame_alignment_node.cpp)
 target_link_libraries(frame_alignment_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${apriltag_LIBRARIES})
 ### Rename C++ executable without prefix
@@ -220,10 +222,10 @@ install(TARGETS subt_coding_node subt_scoring_node frame_alignment_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_subt_artifact_report.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+catkin_add_gtest(relative_metric-test test/test_relative_metric.cpp)
+if(TARGET relative_metric-test)
+  target_link_libraries(relative_metric-test relative)
+endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

@@ -35,12 +35,15 @@ RUN sudo apt-get update \
   apt-utils \
   autoconf \
   libcairo2-dev \
+  libcanberra-gtk-module \
+  libcanberra-gtk3-module \
   libceres1 \
   libceres-dev \
   liblua5.3-dev \
   libopencv-core-dev \
   libprotobuf-dev \
   libsuitesparse-dev \
+  libturbojpeg0-dev \
   protobuf-compiler \
   python-catkin-tools \
   python-minimal \
@@ -53,8 +56,12 @@ RUN sudo apt-get update \
   ros-melodic-cv-bridge \
   ros-melodic-eigen-conversions \
   ros-melodic-image-geometry \
+  ros-melodic-image-proc \
+  ros-melodic-image-transport-plugins \
+  ros-melodic-opencv-apps \
   ros-melodic-pcl-ros \
   ros-melodic-random-numbers \
+  ros-melodic-static-transform-mux \
   ros-melodic-tf-conversions \
   && sudo apt-get clean
 
@@ -64,9 +71,9 @@ WORKDIR /home/developer
 # Clone/Update Repository
 RUN git clone https://git@bitbucket.org/jgrogers/subt_reference_datasets.git \
   && cd subt_reference_datasets \
-  && wstool update -t base_ws/src \
-  && wstool update -t kimera_ws/src \
-  && ./apply_required_build_patches.sh
+  && wstool update -t base_ws/src
+#  && wstool update -t kimera_ws/src \
+#  && ./apply_required_build_patches.sh
 
 # Build Base WS
 RUN cd subt_reference_datasets/base_ws \
@@ -75,8 +82,8 @@ RUN cd subt_reference_datasets/base_ws \
   && catkin build
 
 # Build Kimera WS
-RUN cd subt_reference_datasets/kimera_ws \
-  && catkin init \
-  && catkin config --extend ../base_ws/devel --merge-devel --cmake-args -DCMAKE_BUILD_TYPE=Release \
-  && catkin build
+#RUN cd subt_reference_datasets/kimera_ws \
+#  && catkin init \
+#  && catkin config --extend ../base_ws/devel --merge-devel --cmake-args -DCMAKE_BUILD_TYPE=Release \
+#  && catkin build
 

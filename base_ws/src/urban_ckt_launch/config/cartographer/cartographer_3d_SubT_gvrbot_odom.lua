@@ -10,11 +10,17 @@ POSE_GRAPH.optimization_problem.huber_scale = 5e2
 POSE_GRAPH.optimize_every_n_nodes = 30
 POSE_GRAPH.constraint_builder.sampling_ratio = 0.03
 POSE_GRAPH.optimization_problem.ceres_solver_options.max_num_iterations = 10
-POSE_GRAPH.constraint_builder.min_score = 0.55
+POSE_GRAPH.constraint_builder.max_constraint_distance = 10.
+POSE_GRAPH.constraint_builder.loop_closure_translation_weight = 1.1e3
+POSE_GRAPH.constraint_builder.loop_closure_rotation_weight = 1e5
 POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher_3d.linear_xy_search_window=10.0
 POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher_3d.linear_z_search_window=5.0
-POSE_GRAPH.constraint_builder.global_localization_min_score = 0.66
-POSE_GRAPH.optimization_problem.odometry_rotation_weight = 0.0
+POSE_GRAPH.constraint_builder.min_score = 0.75
+POSE_GRAPH.constraint_builder.global_localization_min_score = 0.80
+POSE_GRAPH.optimization_problem.local_slam_pose_translation_weight = 1e5
+POSE_GRAPH.optimization_problem.local_slam_pose_rotation_weight = 1e5
+POSE_GRAPH.optimization_problem.odometry_translation_weight = 1e5
+POSE_GRAPH.optimization_problem.odometry_rotation_weight = 1e5
 
 function make_options(name)
   options = {

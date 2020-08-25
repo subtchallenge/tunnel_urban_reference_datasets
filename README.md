@@ -52,28 +52,56 @@ https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/sr_B_route1.bag (19.6 GB)
 https://subt-data.s3.amazonaws.com/SubT_Tunnel_Ckt/sr_B_route2.bag (16.3 GB)
 
 ## Usage:
-First, download the public catkin workspace from : 
+First, download the public catkin workspace from: 
 
 git clone https://bitbucket.org/subtchallenge/subt_reference_datasets.git
 
-Build:
+### Docker Install:  
+**Option 1:** Clone workspace inside of image
+> Note: Downloads the workspace and requires working exclusively within the docker container.
+```
+cd subt_reference_datasets/docker
+./build.bash subt_reference_datasets_devel/
+./run.bash subt_reference_datasets_devel/
+```
+
+**Option 2:** Mount workspace inside of image:
+> Note: Allows one to modify files outside of the docker container for use in the docker container.
+```
+cd subt_reference_datasets/docker
+./build.bash subt_reference_datasets_devel/
+./run.bash subt_reference_datasets_devel/ ~/subt_reference_datasets/
+cd other/subt_reference_datasets/
+```
+Then follow the Native Installation instructions below.  
+
+### Native Installation:  
+**Base Workspace Installation: Currently supported**  
+> Note: `YOUR_ROS_CATKIN_WORKSPACE` is typically `/opt/ros/melodic` if you are not extending another workspace.  
 ```
 cd subt_reference_datasets
 wstool update -t base_ws/src
-wstool update -t kimera_ws/src
-. apply_required_build_patches.sh
 rosdep install -y --from-paths base_ws/src --ignore-src --rosdistro melodic
-rosdep install -y --from-paths kimera_ws/src --ignore-src --rosdistro melodic
 cd base_ws
 catkin init
 catkin config --extend YOUR_ROS_CATKIN_WORKSPACE --merge-devel --cmake-args -DCMAKE_BUILD_TYPE=Release
 catkin build
-cd ../kimera_ws
+```
+
+**Kimera Workspace Installation: Currently unsupported**  
+```
+cd subt_reference_datasets
+wstool update -t kimera_ws/src
+. apply_required_build_patches.sh
+rosdep install -y --from-paths kimera_ws/src --ignore-src --rosdistro melodic
+cd kimera_ws
 catkin init
 catkin config --extend ../base_ws/devel --merge-devel --cmake-args -DCMAKE_BUILD_TYPE=Release
 catkin build
 ```
-Go to the directory where you have placed the tunnel circuit bag files
+
+### Experimentation
+Go to the directory where you have placed the tunnel circuit bag files, in this case the bags are in the `data` folder sorted into `tunnel_ckt` and `urban_ckt` folders
 ```
 cd ~/data/tunnel_ckt
 roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag rate:=2.0 odom_only:=true course:=sr config:=B
@@ -98,6 +126,9 @@ Arguments:
 
 "config": can be either A or B. Note that all bag files were taken in configuration B (for now).
 
+"initialize_flat": can either be true or false. Setting this parameter to true will fix the roll and pitch between the map frame and the DARPA frame to zero. Course Alpha in the Urban Circuit dataset has execptionally poor roll and pitch alignment with the DARPA frame so setting this parameter to true for Course Alpha bag files is recommended.
+
+"interval": double. The rate at which to republish the odometry transform as a nav_msg. This is typically used in conjunction with Cartographer for bags from the Urban Circuit dataset.
 
 "omnimapper"
 
@@ -124,14 +155,17 @@ Some other examples of launch commands are as follows:
 Odom Only:  
 ```
 roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag odom_only:=true course:=sr config:=B
+roslaunch urban_ckt_launch remap.launch bag:=a_lvl_1.bag odom_only:=true course:=alpha config:=2
 ```
 Cartographer:  
 ```
 roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag cartographer:=true noodom:=true course:=sr config:=B
+roslaunch urban_ckt_launch remap.launch bag:=a_lvl_1.bag cartographer:=true noodom:=true odom_mode:=odom rate:=1 odom_config_1:=true course:=alpha config:=2 interval:=0.1 initialize_flat:=true
 ```
 ORB-SLAM2:  
 ```
 roslaunch tunnel_ckt_launch remap.launch bag:=sr_B_route2.bag orbslam:=true course:=sr config:=B
+roslaunch urban_ckt_launch remap.launch bag:=a_lvl_1.bag orbslam:=true course:=alpha config:=2
 ```
 **Note: If you are utilized the compressed bags and the `/clock` topic is intermittent, use a playback rate of <1. I recommend a playback rate of 0.25 to 0.5**  
 

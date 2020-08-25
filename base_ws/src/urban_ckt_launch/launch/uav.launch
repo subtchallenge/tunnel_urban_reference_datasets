@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launch>
+  <arg name="bag"/>
+  <arg name="start" default="0"/>
+  <arg name="rviz" default="true"/>
+  <arg name="interval" default="0.1"/>
+
+  <arg name="rate" default="1.0"/>
+  <arg name="mark_artifacts" default="false"/>
+  <arg name="bag_out" default="false"/>
+  <arg name="course" default="ex"/>
+  <arg name="config" default="A"/>
+  <arg name="initialize_flat" default="false"/>
+  <arg name="bag_postfix" default=""/>
+
+    <!-- Mapping mode settings -->
+  <arg name="msckf" default="false"/>   <!-- Note: not stable -->
+  <arg name="vins" default="false"/>    <!-- Note: not stable -->
+  <arg name="orbslam" default="false"/>
+  <arg name="kimera" default="false"/>
+
+  <param name="use_sim_time" value="true"/>
+  <node pkg="rosbag" type="play" name="bagplay" required="true" args="$(env PWD)/$(arg bag) --start $(arg start) --rate $(arg rate) --clock" launch-prefix="xterm -e"/>
+ 
+  <!-- Required TFs -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="camera_link_to_body" args="0.096 0 -0.068 0 0 0 /body /realsense_link"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="camera_to_realsense_frame" args="0 0 0 0 0 0 camera_infra1_optical_frame realsense_infra1_optical_frame"/>
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find realsense2_description)/urdf/test_d435_camera.urdf.xacro' use_nominal_extrinsics:=true" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+ 
+  <group if="$(arg rviz)">
+    <node if="$(arg msckf)" pkg="rviz" type="rviz" name="rviz_msckf" args="-d $(find urban_ckt_launch)/rviz/msckf_uav.rviz"/>
+    <node if="$(arg vins)" pkg="rviz" type="rviz" name="rviz_vins" args="-d $(find urban_ckt_launch)/rviz/vins_uav.rviz"/>
+    <node if="$(arg orbslam)" pkg="rviz" type="rviz" name="rviz_orbslam" args="-d $(find urban_ckt_launch)/rviz/orbslam_uav.rviz"/>
+    <node if="$(arg kimera)" pkg="rviz" type="rviz" name="rviz_kimera" args="-d $(find urban_ckt_launch)/rviz/kimera_uav.rviz"/>
+  </group>
+  <node pkg="static_transform_mux" type="static_transform_mux" name="static_transform_mux"/>
+  <node pkg="subt_artifact_report" type="subt_scoring_node" name="scoring_node" output="screen">
+    <remap from="image" to="realsense/infra1/image_rect_raw"/>
+    <remap from="depth_image" to="realsense/depth/image_rect_raw"/>
+    <remap from="camera_info" to="realsense/infra1/camera_info"/>
+    <param name="object_classes" value="$(env PWD)/object_classes"/>
+    <param name="report_frame" value="base_link"/>
+    <param name="outfile" value="$(env PWD)/coded_artifacts/$(arg bag).artifacts"/>
+    <param name="gt_filename" value="$(env PWD)/GT/gt_$(arg course)_$(arg config).csv"/>
+    <param name="artifacts_filename" value="$(env PWD)/coded_artifacts/$(arg bag).artifacts"/>
+    <param name="output_filename" value="/var/tmp/report"/>
+    <param name="use_optical_frame_report" value="false"/>
+    <param name="fiducial_file" value="$(env PWD)/fiducial_$(arg course)"/>
+    <param name="coding_mode" value="$(arg mark_artifacts)"/>
+    <param name="image_transport" value="raw"/>
+    <param name="depth_transport" value="raw"/>
+    <param name="depth_map_factor" value="1000.0"/>
+    <param name="initialize_flat" value="$(arg initialize_flat)"/>
+  </node>
+  <node pkg="subt_artifact_report" type="frame_alignment_node" name="frame_alignment_node" output="screen">
+    <param name="gt_filename" value="$(env PWD)/GT/gt_$(arg course)_$(arg config).csv"/>
+    <rosparam param="fiducials">
+      - fiducial_24: {x: 0.501, y: 1.326, z: 0.596}
+      - fiducial_25: {x: 0.4675, y: 0.2515, z: 2.686}
+      - fiducial_26: {x: 0.4835, y: -1.34, z: 1.092}
+      - fiducial_27: {x: 15.8315, y: 0.8065, z: 0.991}
+      - fiducial_4: {x: 0.4865, y: 1.3275, z: 0.5955}
+      - fiducial_5: {x: 0.4895, y: 0.251, z: 2.74}
+      - fiducial_6: {x: 0.505, y: -1.3155, z: 1.0965}
+      - fiducial_7: {x: 4.042, y: 20.837, z: 0.9975}
+    </rosparam>
+    <remap from="camera_info" to="realsense/infra1/camera_info"/>
+    <remap from="image" to="realsense/infra1/image_rect_raw"/>
+    <remap from="depth_image" to="realsense/depth/image_rect_raw"/>
+    <param name="image_transport" value="raw"/>
+    <param name="report_frame" value="base_link"/>
+    <param name="map_frame" value="map"/>
+    <param name="odom_frame" value="base_link"/>
+    <param name="initialize_flat" value="$(arg initialize_flat)"/>
+    <param name="depth_map_factor" value="1000.0"/>
+  </node>
+
+  <!-- MSCKF -->
+  <group if="$(arg msckf)">
+    <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).msckf.rmse"/>
+      <!-- Start MSCKF VIO -->
+    <include if="$(arg msckf)" file="$(find urban_ckt_launch)/launch/msckf.launch">
+      <arg name="name" value="uav"/>
+      <arg name="fixed_frame_id" value="map"/>
+      <arg name="base_frame_id" value="base_link"/>
+      <arg name="left_camera_topic" value="/realsense/infra1/image_rect_raw"/>
+      <arg name="right_camera_topic" value="/realsense/infra2/image_rect_raw"/>
+      <arg name="imu_topic" value="/interpolate_imu/imu"/>
+      <arg name="calibration_file" value="$(find urban_ckt_launch)/config/msckf/realsense-camchain-imucam-d435i.yaml"/>
+    </include>
+  </group>
+  <!-- VINS -->
+  <group if="$(arg vins)">
+    <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).vins.rmse"/>
+    <node pkg="vins" type="vins_node" name="vins" output="screen" args="$(find urban_ckt_launch)/config/vins_fusion/realsense_stereo_config_uav.yaml" />
+    <node pkg="loop_fusion" type="loop_fusion_node" name="vins_loop_fusion" output="screen" args="$(find urban_ckt_launch)/config/vins_fusion/realsense_stereo_config_uav.yaml" />
+  </group>
+  <!-- ORBSLAM -->
+  <group if="$(arg orbslam)">
+    <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).orbslam.rmse"/>
+    <include if="$(arg orbslam)" file="$(find urban_ckt_launch)/launch/orb_slam2_realsense.launch">
+      <arg name="name" value="uav"/>
+      <arg name="pointcloud_frame" value="map"/>
+      <arg name="camera_frame" value="base_link"/>
+      <arg name="left_camera_topic" value="/realsense/infra1/image_rect_raw"/>
+      <arg name="right_camera_topic" value="/realsense/infra2/image_rect_raw"/>
+      <arg name="depth_topic" value="/realsense/depth/image_rect_raw"/>
+      <arg name="rgbd_mode" value="true"/>
+      <arg name="mode" value="rgbd"/>
+    </include>
+  </group>
+  <!-- Kimera -->
+  <group if="$(arg kimera)">
+    <param name="/scoring_node/rmse_filename" value="$(env PWD)/$(arg bag)$(arg bag_postfix).kimera.rmse"/>
+      <!-- Start Kimera VIO -->
+    <include if="$(arg kimera)" file="$(find urban_ckt_launch)/launch/kimera_vio_ros.launch">
+      <arg name="params_folder" value="$(find urban_ckt_launch)/config/kimera"/>
+      <arg name="left_cam_topic" value="/realsense/infra1/image_rect_raw"/>
+      <arg name="right_cam_topic" value="/realsense/infra2/image_rect_raw"/>
+      <arg name="imu_topic" value="/interpolate_imu/imu"/>  <!--  /uav/multisense/imu/imu_data -->
+      <arg name="world_frame_id" value="map"/>
+      <arg name="base_link_frame_id" value="base_link"/>
+    </include>
+  </group>
+  
+  <group if="$(arg bag_out)">
+    <node pkg="rosbag" type="record" name="record" args="-O $(env PWD)/$(arg bag).out.bag /tf /tf_static /uav/point_cloud_cache/renderers/full_cloud /uav/point_cloud_cache/renderers/full_map /SubT_markers"/>
+  </group>
+  <param name="/uav/point_cloud_cache/renderers/point_cloud/on_demand_cloud_only" value="true"/>
+</launch>

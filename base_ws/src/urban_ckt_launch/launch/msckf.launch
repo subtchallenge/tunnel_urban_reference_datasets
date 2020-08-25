@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launch>
 
   <arg name="name" default="robot"/>
   <arg name="fixed_frame_id" default="world"/>
+  <arg name="base_frame_id" default="$(arg name)/base"/>
   <arg name="calibration_file" default="$(find urban_ckt_launch)/config/msckf/multisense-camera-robot-imu.yaml"/>
   <arg name="left_camera_topic" default="/cam0/image_raw"/>
   <arg name="right_camera_topic" default="/cam1/image_raw"/>
@@ -27,7 +29,7 @@
     <param name="publish_tf" value="true"/>
     <param name="frame_rate" value="10"/>  <!-- Default: 20 -->
     <param name="fixed_frame_id" value="$(arg fixed_frame_id)"/>
-    <param name="child_frame_id" value="$(arg name)/base"/>
+    <param name="child_frame_id" value="$(arg base_frame_id)"/>
     <param name="max_cam_state_size" value="20"/>
     <param name="position_std_threshold" value="8.0"/>
     
